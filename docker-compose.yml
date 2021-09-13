@@ -1,0 +1,8 @@
+﻿version: '3.9'
+services:
+  fading-flame:
+    image: modmoto/deploynator:latest
+    container_name: deploynator
+    restart: unless-stopped
+    expose:
+      - 80
