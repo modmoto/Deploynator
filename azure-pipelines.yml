@@ -5,7 +5,6 @@ pool:
 
 steps:
   - task: Docker@2
-    condition: eq(variables['Build.Reason'], 'IndividualCI')
     inputs:
       containerRegistry: 'official-docker-modmoto'
       repository: 'modmoto/deploynator'
