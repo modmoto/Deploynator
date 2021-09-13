@@ -6,13 +6,13 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["Deploynator/Deploynator.csproj", "Deploynator/"]
-RUN dotnet restore -r linux-arm "Deploynator/Deploynator.csproj"
+RUN dotnet restore "Deploynator/Deploynator.csproj" -r linux-arm
 COPY . .
 WORKDIR "/src/Deploynator"
-RUN dotnet build -r linux-arm "Deploynator.csproj" -c Release -o /app/build
+RUN dotnet build "Deploynator.csproj" -r linux-arm -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish -r linux-arm "Deploynator.csproj" -c Release -o /app/publish
+RUN dotnet publish "Deploynator.csproj" -r linux-arm -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
