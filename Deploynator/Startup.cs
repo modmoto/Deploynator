@@ -33,7 +33,6 @@ namespace Deploynator
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
