@@ -1,0 +1,27 @@
+name: $(Build.BuildID)
+
+pool:
+  vmImage: "ubuntu-20.04"
+
+steps:
+  - task: Docker@2
+    condition: eq(variables['Build.Reason'], 'IndividualCI')
+    inputs:
+      containerRegistry: 'official-docker-modmoto'
+      repository: 'modmoto/deploynator'
+      command: 'buildAndPush'
+      Dockerfile: '**/Dockerfile'
+      buildContext: '.'
+      tags: |
+        $(Build.BuildID),
+        latest
+
+  - task: CopyFiles@2
+    displayName: publish docker-compose files
+    inputs:
+      contents: '**/*docker-compose.yml'
+      targetFolder: $(Build.ArtifactStagingDirectory)
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: $(Build.ArtifactStagingDirectory)
