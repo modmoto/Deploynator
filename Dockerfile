@@ -1,17 +1,20 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:5.0 AS base
-ENV DOTNET_CLI_TELEMETRY_OPTOUT 1
+﻿FROM mcr.microsoft.com/dotnet/aspnet:5.0.9-alpine3.13-arm32v7 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
 
-RUN mkdir -p /root/src/app
-WORKDIR /root/src/app
-COPY Deploynator Deploynator
-WORKDIR /root/src/app/Deploynator
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+WORKDIR /src
+COPY ["Deploynator/Deploynator.csproj", "Deploynator/"]
+RUN dotnet restore "Deploynator/Deploynator.csproj"
+COPY . .
+WORKDIR "/src/Deploynator"
+RUN dotnet build "Deploynator.csproj" -c Release -o /app/build
 
-RUN dotnet restore ./Deploynator.csproj
-RUN dotnet publish -c release -o published -r linux-arm
+FROM build AS publish
+RUN dotnet publish "Deploynator.csproj" -c Release -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0.9-alpine3.13-arm32v7
-
-WORKDIR /root/
-COPY --from=builder /root/src/app/Deploynator/published .
-
-CMD ["dotnet", "./Deploynator.dll"]
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "Deploynator.dll"]
