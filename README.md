@@ -13,3 +13,6 @@ The Deploynator should be running on port 5000 now and will be accessible in the
 To Rebuild:
 
 `bash ./RebuildLatestVersion.sh`
+
+## sounds
+https://ttsmp3.com/ the voice used is salli
