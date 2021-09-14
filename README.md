@@ -16,5 +16,4 @@ To Rebuild:
 
 ## sounds
 - https://ttsmp3.com/ the voice used is salli
-- for the code to work, run `sudo apt install mpv -y` on the raspi first, or you will play the sounds in the browser
-- install `sudo apt-get install mpg123` for the netcore audio to work
+- install `sudo apt-get install mpg123` for the netcore audio to work on linux
