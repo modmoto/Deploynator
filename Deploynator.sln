@@ -10,7 +10,8 @@ ProjectSection(SolutionItems) = preProject
 	Dockerfile = Dockerfile
 	README.md = README.md
 	Deploynator.service = Deploynator.service
-	InstallAndRunAsService.sh = InstallAndRunAsService.sh
+	RebuildLatestVersion.sh = RebuildLatestVersion.sh
+	InstallAsService.sh = InstallAsService.sh
 EndProjectSection
 EndProject
 Global
