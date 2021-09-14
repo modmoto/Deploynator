@@ -4,6 +4,8 @@ Description=Deploynator service
 [Service]
 ExecStart=/srv/Deploynator/Deploynator
 SyslogIdentifier=Deploynator
+WorkingDirectory=/srv/Deploynator/
+ExecStart=/opt/dotnet run /srv/Deploynator/Deploynator.dll
 
 User=pi
 
