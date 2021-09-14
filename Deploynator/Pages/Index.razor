@@ -1,5 +1,29 @@
 @page "/"
+@using NetCoreAudio
 
 <audio controls>
     <source src="voice-commands/device-ready.mp3" type="audio/mpeg">
 </audio>
+
+<button @onclick="() => RasperrySound()">play device ready</button>
+
+
+@code {
+    private void RasperrySound()
+    {
+        var PathToMp3File = "/srv/Deploynator/voice-commands/device-ready.mp3";
+        //
+        // var PulseAudioStart = System.Diagnostics.Process.Start("pactl", "info");
+        // PulseAudioStart.WaitForExit();
+        // if(PulseAudioStart.ExitCode != 0)
+        //     throw new Exception($"Failed to initialize the PulseAudio daemon: {PulseAudioStart.ExitCode}");
+        //
+        // var MpvStart = System.Diagnostics.Process.Start("mpv", $"--no-video --gapless-audio --volume=100.0 {PathToMp3File}");
+        // MpvStart.WaitForExit();
+        // if(MpvStart.ExitCode != 0)
+        //     throw new Exception($"Failed to start the player: {MpvStart.ExitCode}");
+
+        var player = new Player();
+        player.Play(PathToMp3File);
+    }
+}
