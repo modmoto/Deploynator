@@ -17,8 +17,6 @@ namespace Deploynator
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseWebRoot("/srv/Deploynator/wwwroot");
-                    webBuilder.UseStaticWebAssets();
                 });
     }
 }
