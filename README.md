@@ -12,4 +12,4 @@ The Deploynator should be running on port 5000 now and will be accessible in the
 
 To Rebuild:
 
-`bash ./InstallAsService.sh`
+`bash ./RebuildLatestVersion.sh`
