@@ -3,7 +3,7 @@
 git pull
 
 sudo mkdir /srv/Deploynator
-sudo chown yourusername /srv/Deploynator
+sudo chown pi /srv/Deploynator
 
 dotnet publish -c Release -o /srv/Deploynator
 chmod +x /srv/Deploynator/Deploynator
