@@ -34,6 +34,7 @@ namespace Deploynator
             }
 
             app.UseStaticFiles();
+            app.UseDirectoryBrowser();
 
             app.UseRouting();
 
