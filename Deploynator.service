@@ -7,10 +7,10 @@ ExecStart=/srv/Deploynator/Deploynator
 SyslogIdentifier=Deploynator
 WorkingDirectory=/srv/Deploynator
 
-User=pi
+User=root
 
 Environment=DOTNET_ROOT=/opt/dotnet
-Environment="ASPNETCORE_URLS=http://0.0.0.0:5000/"
+Environment="ASPNETCORE_URLS=http://0.0.0.0:80/;https://0.0.0.0:443/"
 
 [Install]
 WantedBy=multi-user.target
