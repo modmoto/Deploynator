@@ -2,6 +2,7 @@
 Description=Deploynator service
 
 [Service]
+Type=notify
 ExecStart=/srv/Deploynator/Deploynator
 SyslogIdentifier=Deploynator
 
