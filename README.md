@@ -16,4 +16,5 @@ To Rebuild:
 
 ## sounds
 - https://ttsmp3.com/ the voice used is salli
-- install `sudo apt-get install mpg123` for the netcore audio to work on linux
+- install `sudo apt-get install mpg123` for the `netcore` audio to work on linux
+- or use the azure version which has 5 million keys for free.

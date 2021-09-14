@@ -1,5 +1,4 @@
 @page "/"
-@* @using NetCoreAudio *@
 @using Microsoft.CognitiveServices.Speech
 
 <button @onclick="() => RasperrySound()">play device ready</button>
@@ -7,10 +6,6 @@
 @code {
     private async Task RasperrySound()
     {
-        // var pathToMp3File = "./wwwroot/voice-commands/device-ready.mp3";
-        // var player = new Player();
-        // player.Play(pathToMp3File);
-
         var config = SpeechConfig.FromSubscription("990a253fc3cb487e8f02867fcd3d86c2", "francecentral");
         var synthesizer = new SpeechSynthesizer(config);
         await synthesizer.SpeakTextAsync("This is easy as fuck");
