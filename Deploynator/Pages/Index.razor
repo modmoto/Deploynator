@@ -7,7 +7,9 @@
     private async Task RasperrySound()
     {
         var config = SpeechConfig.FromSubscription("990a253fc3cb487e8f02867fcd3d86c2", "francecentral");
+        // config.SpeechSynthesisVoiceName = "en-US-AriaNeural";
+        config.SpeechSynthesisVoiceName = "en-US-SaraNeural";
         var synthesizer = new SpeechSynthesizer(config);
-        await synthesizer.SpeakTextAsync("This is easy as fuck");
+        synthesizer.SpeakTextAsync("Device ready, awaiting deployment sequence").Wait();
     }
 }
