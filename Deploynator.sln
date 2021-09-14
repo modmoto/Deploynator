@@ -9,6 +9,8 @@ ProjectSection(SolutionItems) = preProject
 	docker-compose.yml = docker-compose.yml
 	Dockerfile = Dockerfile
 	README.md = README.md
+	Deploynator.service = Deploynator.service
+	InstallAndRunAsService.sh = InstallAndRunAsService.sh
 EndProjectSection
 EndProject
 Global

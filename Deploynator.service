@@ -1,0 +1,13 @@
+﻿[Unit]
+Description=Deploynator service
+
+[Service]
+ExecStart=/srv/Deploynator/Deploynator
+SyslogIdentifier=Deploynator
+
+User=pi
+
+Environment=DOTNET_ROOT=/opt/dotnet/dotnet
+
+[Install]
+WantedBy=multi-user.target
