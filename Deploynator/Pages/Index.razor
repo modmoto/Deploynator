@@ -10,6 +10,6 @@
         // config.SpeechSynthesisVoiceName = "en-US-AriaNeural";
         config.SpeechSynthesisVoiceName = "en-US-SaraNeural";
         var synthesizer = new SpeechSynthesizer(config);
-        synthesizer.SpeakTextAsync("Device ready, awaiting deployment sequence").Wait();
+        await synthesizer.SpeakTextAsync("Device ready, awaiting deployment sequence");
     }
 }
