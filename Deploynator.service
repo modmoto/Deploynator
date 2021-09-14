@@ -8,6 +8,7 @@ SyslogIdentifier=Deploynator
 User=pi
 
 Environment=DOTNET_ROOT=/opt/dotnet
+Environment="ASPNETCORE_URLS=http://0.0.0.0:5000/"
 
 [Install]
 WantedBy=multi-user.target
