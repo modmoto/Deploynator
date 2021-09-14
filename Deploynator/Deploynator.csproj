@@ -9,4 +9,8 @@
       <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="5.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Content Update="wwwroot\**\*.*" CopyToPublishDirectory="Always" />
+    </ItemGroup>
+
 </Project>
