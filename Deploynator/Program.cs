@@ -14,6 +14,10 @@ namespace Deploynator
             Host.CreateDefaultBuilder(args)
                 .UseWindowsService()
                 .UseSystemd()
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStaticWebAssets();
+                });
     }
 }
