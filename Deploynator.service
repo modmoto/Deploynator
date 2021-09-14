@@ -4,7 +4,7 @@ Description=Deploynator service
 [Service]
 ExecStart=/srv/Deploynator/Deploynator
 SyslogIdentifier=Deploynator
-WorkingDirectory=/srv/Deploynator/
+WorkingDirectory=/srv/Deploynator
 
 User=pi
 
