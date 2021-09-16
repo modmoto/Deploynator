@@ -1,8 +1,6 @@
-using System;
 using System.Device.Gpio;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -10,10 +8,7 @@ namespace Deploynator
 {
     public class RaspberryHandler : IHostedService
     {
-        private bool _releaseButtonPressed;
         private ILogger<RaspberryHandler> _logger;
-        private const int Led1 = 10;
-        private const int ReleaseButton = 26;
 
 
         public RaspberryHandler(ILogger<RaspberryHandler> logger)
@@ -25,32 +20,18 @@ namespace Deploynator
         {
             do
             {
-                try
+                var controller = new GpioController(PinNumberingScheme.Board);
+
+                // controller.OpenPin(10, PinMode.Output);
+                controller.OpenPin(26, PinMode.InputPullUp);
+
+                if (controller.Read(26) == false)
                 {
-                    var controller = new GpioController(PinNumberingScheme.Board);
-
-                    controller.OpenPin(Led1, PinMode.Output);
-                    controller.OpenPin(ReleaseButton, PinMode.InputPullUp);
-
-                    if (controller.Read(ReleaseButton) == false && _releaseButtonPressed == false)
-                    {
-                        _releaseButtonPressed = true;
-                        // _eventBus.OnReleaseTriggered();
-                        _logger.LogInformation("Release triggered");
-                    }
-                    else
-                    {
-                        if (controller.Read(ReleaseButton) == true)
-                        {
-                            _releaseButtonPressed = false;
-                        }
-                    }
-
-                    await Task.Delay(5);
+                    _logger.LogInformation("Release triggered");
                 }
-                catch (Exception e)
+                else
                 {
-                    _logger.LogError(e, "Rasbi dead");
+                    _logger.LogInformation("no");
                 }
 
                 await Task.Delay(5, cancellationToken);
