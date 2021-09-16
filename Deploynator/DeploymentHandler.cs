@@ -18,7 +18,7 @@ namespace Deploynator
             _azureReleaseRepository = azureReleaseRepository;
             _eventBus = eventBus;
 
-            _eventBus.ReleaseButtonTriggered += (_, _) => TriggerReleasesAsync();
+            _eventBus.ReleaseCountdownFinished += (_, args) => TriggerReleasesAsync((DeployArgs) args);
 
             _eventBus.UpButtonTriggered += (_, _) => MoveU();
             _eventBus.DownButtonTriggered += (_, _) => MoveDown();
@@ -32,10 +32,14 @@ namespace Deploynator
             SelectedReleaseDefinitions = new List<ReleaseDefinition>();
         }
 
-        private async Task TriggerReleasesAsync()
+        private async Task TriggerReleasesAsync(DeployArgs deployArgs)
         {
-            var result = await _azureReleaseRepository.DeployToProdAsync(1);
-            _eventBus.OnReleasesTriggered(SelectedReleaseDefinitions);
+            foreach (var releaseDefinition in deployArgs.SelectedDeloyments)
+            {
+                var result = await _azureReleaseRepository.DeployToProdAsync(releaseDefinition.Id);
+            }
+            
+            _eventBus.OnReleaseSuceeded();
         }
 
         public string CurrentSelection => ReleaseDefinitions[_index].Name;

@@ -24,7 +24,7 @@ namespace Deploynator
 
             _eventBus.DeselectedDeloyment += (_, args) =>
             {
-                Play($"{(args as SelectArgs)?.Name} removed from Deployment, bitch please, where the balls at");
+                Play($"{(args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name} removed from Deployment, bitch please, where the balls at");
             };
 
             var config = SpeechConfig.FromSubscription("990a253fc3cb487e8f02867fcd3d86c2", "francecentral");

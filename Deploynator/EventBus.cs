@@ -100,16 +100,16 @@ namespace Deploynator
             handler?.Invoke(this, new DeployArgs(releaseDefinitions));
         }
 
-        public void OnReleaseCountdownFinished(List<string> selectedDeloyments)
+        public void OnReleaseCountdownFinished(IEnumerable<ReleaseDefinition> selectedDeloyments)
         {
             var handler = ReleaseCountdownFinished;
             handler?.Invoke(this, new DeployArgs(selectedDeloyments));
         }
 
-        public void OnDeselectedDeloyment(string deloyment)
+        public void OnDeselectedDeloyment(ReleaseDefinition releaseDefinition)
         {
             var handler = DeselectedDeloyment;
-            handler?.Invoke(this, new SelectArgs(deloyment));
+            handler?.Invoke(this, new SelectReleaseDefinitionArgs(releaseDefinition));
         }
     }
 
