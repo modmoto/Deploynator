@@ -10,22 +10,15 @@ namespace Deploynator
 
         public AudioStream(EventBus eventBus)
         {
-            eventBus.ReleaseButtonTriggered += (_, _) => OnReleaseButtonTriggered();
-            eventBus.ServiceStarted += (_, _) => OnServiceStarted();
+            eventBus.ReleaseButtonTriggered += (_, _) => Play("Release triggered");
+            eventBus.ServiceStarted += (_, _) => Play("Deployment ready, awaiting deployment sequence");
+            eventBus.ReleaseFailed += (_, _) => Play("Release failed, leave the building immediatly");
+            eventBus.ReleaseSuceeded += (_, _) => Play("Release suceeded, time to open that bottle of champagne");
+
             var config = SpeechConfig.FromSubscription("990a253fc3cb487e8f02867fcd3d86c2", "francecentral");
             // config.SpeechSynthesisVoiceName = "en-US-AriaNeural";
             config.SpeechSynthesisVoiceName = "en-US-SaraNeural";
             _synthesizer = new SpeechSynthesizer(config);
-        }
-
-        private async Task OnServiceStarted()
-        {
-            await Play("Deployment ready, awaiting deployment sequence");
-        }
-
-        private async void OnReleaseButtonTriggered()
-        {
-            await Play("Release triggered");
         }
 
         public async Task Play(string message)

@@ -24,6 +24,19 @@ namespace Deploynator
 
             _controller.OpenPin(Led1, PinMode.Output);
             _controller.OpenPin(ReleaseButton, PinMode.InputPullUp);
+
+            _eventBus.ReleaseFailed += (_, _) => OnReleaseFailed();
+            _eventBus.ReleaseSuceeded += (_, _) => OnReleaseSuceeded();
+        }
+
+        private void OnReleaseSuceeded()
+        {
+            // led an
+        }
+
+        private void OnReleaseFailed()
+        {
+            //led an
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
