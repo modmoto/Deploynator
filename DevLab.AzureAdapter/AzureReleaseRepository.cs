@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -18,9 +17,6 @@ namespace DevLab.AzureAdapter
         public AzureReleaseRepository(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            var encodedAuth = Encoding.ASCII.GetBytes("nhaeffner:cqaaxxheevlylb5ohe65fnkoxi2g6y7zzybqojrcnq4juwixdx7q");
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(encodedAuth));
-
             _jsonOptions = new JsonSerializerOptions();
             _jsonOptions.PropertyNameCaseInsensitive = true;
             _jsonOptions.PropertyNamingPolicy = null;
