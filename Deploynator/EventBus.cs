@@ -4,11 +4,18 @@ namespace Deploynator
 {
     public class EventBus
     {
-        public event EventHandler ReleaseTriggered;
+        public event EventHandler ReleaseButtonTriggered;
+        public event EventHandler ReleaseButtonReleased;
 
-        public virtual void OnReleaseTriggered()
+        public virtual void OnReleaseButtonTriggered()
         {
-            var handler = ReleaseTriggered;
+            var handler = ReleaseButtonTriggered;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
+
+        public virtual void OnReleaseButtonReleased()
+        {
+            var handler = ReleaseButtonTriggered;
             handler?.Invoke(this, EventArgs.Empty);
         }
     }

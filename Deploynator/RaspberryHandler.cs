@@ -1,4 +1,3 @@
-using System;
 using System.Device.Gpio;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,39 +9,44 @@ namespace Deploynator
     public class RaspberryHandler : IHostedService
     {
         private readonly ILogger<RaspberryHandler> _logger;
+        private readonly EventBus _eventBus;
         private readonly GpioController _controller;
+        private bool _releaseButtonDown;
         private const int Led1 = 10;
-        private const int Button1 = 26;
+        private const int ReleaseButton = 26;
 
-        public RaspberryHandler(ILogger<RaspberryHandler> logger)
+        public RaspberryHandler(ILogger<RaspberryHandler> logger, EventBus eventBus)
         {
             _logger = logger;
+            _eventBus = eventBus;
             _controller = new GpioController(PinNumberingScheme.Board);
 
             _controller.OpenPin(Led1, PinMode.Output);
-            _controller.OpenPin(Button1, PinMode.InputPullUp);
+            _controller.OpenPin(ReleaseButton, PinMode.InputPullUp);
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            while(true)
+            do
             {
-                if (_controller.Read(Button1) == false)
+                if (_controller.Read(ReleaseButton) == false && _releaseButtonDown == false)
                 {
-                    _logger.LogInformation("leLldldldld");
-                    await Task.Delay(100);
+                    _eventBus.OnReleaseButtonTriggered();
+                    _logger.LogInformation("triggered Release");
+                    await Task.Delay(1000);
                 }
                 else
                 {
-                    _logger.LogInformation("lu");
+                    if (_controller.Read(ReleaseButton) == false)
+                    {
+                        _releaseButtonDown = false;
+                        _eventBus.OnReleaseButtonReleased();
+                        _logger.LogInformation("released Release");
+                    }
                 }
 
                 await Task.Delay(10);
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    break;
-                }
-            }
+            } while (!cancellationToken.IsCancellationRequested);
         }
 
         private void TurnOffLed(int pin)
@@ -58,7 +62,7 @@ namespace Deploynator
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _controller.ClosePin(Led1);
-            _controller.ClosePin(Button1);
+            _controller.ClosePin(ReleaseButton);
             return Task.CompletedTask;
         }
     }
