@@ -1,34 +1,3 @@
 @page "/"
 
-<button @onclick="() => RasperrySound()">play device ready</button>
-<div>@_isDown</div>
-@inject AudioStream _audioStream
-@inject EventBus _eventBus
-
-@code {
-
-    private string _isDown;
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        _eventBus.ReleaseButtonTriggered += (_, _) => ReleaseButtonTriggered();
-        _eventBus.ReleaseButtonReleased += (_, _) => ReleaseButtonReleased();
-    }
-
-    private void ReleaseButtonTriggered()
-    {
-        _isDown = "true";
-        StateHasChanged();
-    }
-
-    private void ReleaseButtonReleased()
-    {
-        _isDown = "false";
-        StateHasChanged();
-    }
-
-    private async Task RasperrySound()
-    {
-        await _audioStream.Play("Device ready, awaiting deployment sequence");
-    }
-}
+<div>the shit</div>
