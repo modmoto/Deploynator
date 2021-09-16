@@ -25,7 +25,7 @@ namespace Deploynator
             _eventBus.SelectButtonTriggered += (_, _) => Select();
             _eventBus.DeselectButtonTriggered += (_, _) => Deselect();
 
-            ReleaseDefinitions = _azureReleaseRepository.GetReleaseDefinitionsAsync().GetAwaiter().GetResult().ToList();
+            ReleaseDefinitions = _azureReleaseRepository.GetReleaseDefinitionsAsync().Result.ToList();
         }
 
         private async Task TriggerReleasesAsync(DeployArgs deployArgs)
