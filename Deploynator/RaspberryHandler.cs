@@ -32,6 +32,7 @@ namespace Deploynator
                 if (_controller.Read(ReleaseButton) == false && _releaseButtonDown == false)
                 {
                     _eventBus.OnReleaseButtonTriggered();
+                    _releaseButtonDown = true;
                     _logger.LogInformation("triggered Release");
                     await Task.Delay(1000);
                 }
@@ -44,6 +45,8 @@ namespace Deploynator
                         _logger.LogInformation("released Release");
                     }
                 }
+
+                _logger.LogInformation("nono");
 
                 await Task.Delay(10);
             } while (!cancellationToken.IsCancellationRequested);
