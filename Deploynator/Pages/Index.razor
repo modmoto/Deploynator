@@ -2,8 +2,29 @@
 
 <button @onclick="() => RasperrySound()">play device ready</button>
 <div>@_isDown</div>
+
+
+<h2>des</h2>
+@foreach (var d in _handler.Deloyments)
+{
+    <h4>@d</h4>
+}
+
+
+<h2>selected</h2>
+@foreach (var d in _handler.SelectedDeloyments)
+{
+    <h4>@d</h4>
+}
+
+<button @onclick="() => Do(() => _handler.MoveU())">ub</button>
+<button @onclick="() => Do(() => _handler.MoveDown())">down</button>
+<button @onclick="() => Do(() => _handler.Select())">select</button>
+<button @onclick="() => Do(() => _handler.Deselect())">unselect</button>
+
 @inject AudioStream _audioStream
 @inject EventBus _eventBus
+@inject DeploymentHandler _handler
 
 @code {
     private string _isDown = "ub";
@@ -36,4 +57,11 @@
     {
         await _audioStream.Play("Device ready, awaiting deployment sequence");
     }
+
+    private void Do(Action action)
+    {
+        action.Invoke();
+        StateHasChanged();
+    }
+
 }

@@ -7,8 +7,8 @@ namespace Deploynator
     {
         private readonly AzureReleaseRepository _azureReleaseRepository;
         private readonly EventBus _eventBus;
-        private List<string> _deloyments;
-        private List<string> _selectedDeloyments;
+        public List<string> Deloyments;
+        public List<string> SelectedDeloyments;
         private int _index;
 
         public DeploymentHandler(AzureReleaseRepository azureReleaseRepository, EventBus eventBus)
@@ -21,40 +21,40 @@ namespace Deploynator
             _eventBus.SelectButtonTriggered += (_, _) => Select();
             _eventBus.DeselectButtonTriggered += (_, _) => Deselect();
 
-            _deloyments = new List<string>
+            Deloyments = new List<string>
             {
                 "artnerservice",
                 "Messaging Service",
                 "Activity Minutes service"
             };
 
-            _selectedDeloyments = new List<string>();
-            _selectedDeloyments = new List<string>();
+            SelectedDeloyments = new List<string>();
+            SelectedDeloyments = new List<string>();
         }
 
-        private void Select()
+        public void Select()
         {
-            _selectedDeloyments.Add(_deloyments[_index]);
-            _selectedDeloyments = _selectedDeloyments.Distinct().ToList();
+            SelectedDeloyments.Add(Deloyments[_index]);
+            SelectedDeloyments = SelectedDeloyments.Distinct().ToList();
         }
 
-        private void MoveDown()
+        public void MoveDown()
         {
             if (_index <= 0) return;
             _index--;
-            _eventBus.OnPreselectedDeloyment(_deloyments[_index]);
+            _eventBus.OnPreselectedDeloyment(Deloyments[_index]);
         }
 
-        private void MoveU()
+        public void MoveU()
         {
-            if (_index >= _deloyments.Count) return;
+            if (_index >= Deloyments.Count) return;
             _index++;
-            _eventBus.OnPreselectedDeloyment(_deloyments[_index]);
+            _eventBus.OnPreselectedDeloyment(Deloyments[_index]);
         }
 
-        private void Deselect()
+        public void Deselect()
         {
-            _selectedDeloyments = _selectedDeloyments.Where(d => d !=_deloyments[_index]).ToList();
+            SelectedDeloyments = SelectedDeloyments.Where(d => d !=Deloyments[_index]).ToList();
         }
 
     }
