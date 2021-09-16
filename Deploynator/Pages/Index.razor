@@ -28,6 +28,7 @@
     {
         _eventBus.ReleaseButtonTriggered += (_, _) => InvokeAsync(() => StateHasChanged());
         _eventBus.ReleaseButtonReleased += (_, _) => InvokeAsync(() => StateHasChanged());
+        _eventBus.ReleaseLoaded += (_, _) => InvokeAsync(() => StateHasChanged());
 
         _eventBus.SelectedDeloyment += (_, _) => InvokeAsync(() => StateHasChanged());
         _eventBus.PreselectedDeloyment += (_, _) => InvokeAsync(() => StateHasChanged());

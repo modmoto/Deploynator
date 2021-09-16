@@ -20,6 +20,7 @@ namespace Deploynator
         public event EventHandler ReleasesTriggered;
         public event EventHandler ReleaseCountdownFinished;
         public event EventHandler DeselectedDeloyment;
+        public event EventHandler ReleaseLoaded;
 
         public virtual void OnReleaseButtonTriggered()
         {
@@ -103,6 +104,12 @@ namespace Deploynator
         {
             var handler = DeselectedDeloyment;
             handler?.Invoke(this, new SelectReleaseDefinitionArgs(releaseDefinition));
+        }
+
+        public void OnReleaseLoaded(List<ReleaseDefinition> releaseDefinitions)
+        {
+            var handler = ReleaseLoaded;
+            handler?.Invoke(this, new DeployArgs(releaseDefinitions));
         }
     }
 

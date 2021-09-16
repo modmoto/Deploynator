@@ -55,6 +55,7 @@ namespace Deploynator
         {
             _logger.LogInformation("Service started");
             _eventBus.OnServiceStarted();
+
             do
             {
                 try
