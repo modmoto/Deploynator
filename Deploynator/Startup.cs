@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Net.Http;
 using DevLab.AzureAdapter;
 using Microsoft.AspNetCore.Builder;
@@ -28,7 +29,9 @@ namespace Deploynator
             services.AddSingleton(new AudioStream(eventBus));
             services.AddSingleton(new LcdScreen(eventBus));
             var httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("http://atdevops.azure.intern/NgCollection/Devlab/_apis/");
+            ServicePointManager.ServerCertificateValidationCallback +=
+                (sender, cert, chain, sslPolicyErrors) => true;
+            httpClient.BaseAddress = new Uri("https://atdevops.azure.intern/NgCollection/Devlab/_apis/");
             services.AddSingleton(new DeploymentHandler(new AzureReleaseRepository(httpClient), eventBus));
 
             services.AddHostedService<RaspberryHandler>();
