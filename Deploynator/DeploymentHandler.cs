@@ -23,10 +23,12 @@ namespace Deploynator
 
             Deloyments = new List<string>
             {
-                "artnerservice",
+                "Partner Srvice",
                 "Messaging Service",
-                "Activity Minutes service"
+                "Activity Minutes Service"
             };
+
+            _eventBus.OnDeploymentsLoaded(Deloyments[0]);
 
             SelectedDeloyments = new List<string>();
             SelectedDeloyments = new List<string>();

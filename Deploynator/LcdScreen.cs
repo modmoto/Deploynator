@@ -26,6 +26,11 @@ namespace Deploynator
             {
                 WriteText((args as SelectArgs)?.Name);
             };
+
+            eventBus.DeploymentsLoaded += (_, args) =>
+            {
+                WriteText((args as SelectArgs)?.Name);
+            };
         }
 
         private void WriteText(string text)

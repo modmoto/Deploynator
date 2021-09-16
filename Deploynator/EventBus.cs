@@ -14,12 +14,19 @@ namespace Deploynator
         public event EventHandler ReleaseSuceeded;
         public event EventHandler ReleaseFailed;
         public event EventHandler PreselectedDeloyment;
+        public event EventHandler DeploymentsLoaded;
         public event EventHandler SelectedDeloyment;
 
         public virtual void OnReleaseButtonTriggered()
         {
             var handler = ReleaseButtonTriggered;
             handler?.Invoke(this, EventArgs.Empty);
+        }
+
+        public virtual void OnDeploymentsLoaded(string name)
+        {
+            var handler = DeploymentsLoaded;
+            handler?.Invoke(this, new SelectArgs(name));
         }
 
         public virtual void OnUpButtonTriggered()

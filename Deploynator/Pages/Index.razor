@@ -37,6 +37,8 @@
 
         _eventBus.SelectedDeloyment += (_, _) => StateHasChanged();
         _eventBus.PreselectedDeloyment += (_, _) => StateHasChanged();
+        _eventBus.DownButtonTriggered += (_, _) => StateHasChanged();
+        _eventBus.UpButtonTriggered += (_, _) => StateHasChanged();
     }
 
     private void OnReleaseButtonTriggered()
