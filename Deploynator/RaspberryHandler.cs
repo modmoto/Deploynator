@@ -10,7 +10,7 @@ namespace Deploynator
     {
         private readonly ILogger<RaspberryHandler> _logger;
         private readonly EventBus _eventBus;
-        private readonly GpioController _controller;
+        private GpioController _controller;
         private bool _releaseButtonPressed;
         private const int Led1 = 10;
         private const int ReleaseButton = 26;
@@ -19,14 +19,15 @@ namespace Deploynator
         {
             _logger = logger;
             _eventBus = eventBus;
-            _controller = new GpioController(PinNumberingScheme.Board);
-
-            _controller.OpenPin(Led1, PinMode.Output);
-            _controller.OpenPin(ReleaseButton, PinMode.InputPullUp);
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            _controller = new GpioController(PinNumberingScheme.Board);
+
+            _controller.OpenPin(Led1, PinMode.Output);
+            _controller.OpenPin(ReleaseButton, PinMode.InputPullUp);
+
             while(true)
             {
                 CheckReleaseButtonPressed();
