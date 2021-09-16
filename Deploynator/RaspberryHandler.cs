@@ -37,7 +37,7 @@ namespace Deploynator
                         _eventBus.OnReleaseButtonTriggered();
                         _releaseButtonDown = true;
                         _logger.LogInformation("triggered Release");
-                        await Task.Delay(100);
+                        await Task.Delay(100, cancellationToken);
                     }
                     else
                     {
@@ -50,7 +50,7 @@ namespace Deploynator
                     }
 
                     _logger.LogInformation("nono");
-                    await Task.Delay(500);
+                    await Task.Delay(500, cancellationToken);
                 }
                 catch (Exception e)
                 {
