@@ -57,7 +57,7 @@ namespace Deploynator
                     _logger.LogError(e, "dead");
                 }
 
-                count++;
+                // count++;
             } while (!cancellationToken.IsCancellationRequested && count < 10);
 
             Clean();
