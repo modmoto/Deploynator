@@ -23,15 +23,21 @@ namespace Deploynator
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
             var eventBus = new EventBus();
             services.AddSingleton(eventBus);
             services.AddSingleton(new AudioStream(eventBus));
             services.AddSingleton(new LcdScreen(eventBus));
-            var httpClient = new HttpClient();
-            ServicePointManager.ServerCertificateValidationCallback +=
-                (sender, cert, chain, sslPolicyErrors) => true;
+
+            var handler = new HttpClientHandler();
+            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+            handler.ServerCertificateCustomValidationCallback =
+                (httpRequestMessage, cert, cetChain, policyErrors) =>
+                {
+                    return true;
+                };
+
+            var httpClient = new HttpClient(handler);
             httpClient.BaseAddress = new Uri("http://atdevops.azure.intern/NgCollection/Devlab/_apis/");
             services.AddSingleton(new DeploymentHandler(new AzureReleaseRepository(httpClient), eventBus));
 
