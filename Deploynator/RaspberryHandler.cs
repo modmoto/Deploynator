@@ -9,60 +9,56 @@ namespace Deploynator
 {
     public class RaspberryHandler : IHostedService
     {
-        private ILogger<RaspberryHandler> _logger;
-
+        private readonly ILogger<RaspberryHandler> _logger;
+        private readonly GpioController _controller;
+        private const int Led1 = 10;
+        private const int Button1 = 26;
 
         public RaspberryHandler(ILogger<RaspberryHandler> logger)
         {
             _logger = logger;
+            _controller = new GpioController(PinNumberingScheme.Board);
+
+            _controller.OpenPin(Led1, PinMode.Output);
+            _controller.OpenPin(Button1, PinMode.InputPullUp);
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            do
+            while(true)
             {
-                try
+                if (_controller.Read(Button1) == false)
                 {
-                    var controller = new GpioController(PinNumberingScheme.Board);
-
-                    // controller.OpenPin(10, PinMode.Output);
-                    controller.ClosePin(10);
-                    controller.ClosePin(26);
-                    controller.OpenPin(26, PinMode.InputPullUp);
-
-                    if (controller.Read(26) == false)
-                    {
-                        _logger.LogInformation("Release triggered");
-                    }
-                    else
-                    {
-                        _logger.LogInformation("no");
-                    }
-
-                    await Task.Delay(5, cancellationToken);
+                    _logger.LogInformation("leLldldldld");
+                    await Task.Delay(100);
                 }
-                catch (Exception e)
+                else
                 {
-                    _logger.LogError(e, "dead");
+                    _logger.LogInformation("lu");
+                }
+
+                await Task.Delay(10);
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
                 }
             }
-            while (!cancellationToken.IsCancellationRequested);
         }
 
-        // private void TurnOffLed(int pin)
-        // {
-        //     _controller.Write(pin, PinValue.Low);
-        // }
-        //
-        // private void TurnOnLed(int pin)
-        // {
-        //     _controller.Write(pin, PinValue.High);
-        // }
+        private void TurnOffLed(int pin)
+        {
+            _controller.Write(pin, PinValue.Low);
+        }
+
+        private void TurnOnLed(int pin)
+        {
+            _controller.Write(pin, PinValue.High);
+        }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            // _controller.ClosePin(Led1);
-            // _controller.ClosePin(ReleaseButton);
+            _controller.ClosePin(Led1);
+            _controller.ClosePin(Button1);
             return Task.CompletedTask;
         }
     }
