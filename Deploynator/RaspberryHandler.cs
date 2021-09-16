@@ -34,20 +34,20 @@ namespace Deploynator
                 {
                     if (_controller.Read(ReleaseButton) == false)
                     {
-                        _eventBus.OnReleaseButtonTriggered();
-                        _releaseButtonDown = true;
+                        // _eventBus.OnReleaseButtonTriggered();
+                        // _releaseButtonDown = true;
                         _logger.LogInformation("triggered Release");
                         await Task.Delay(100, cancellationToken);
                     }
-                    else
-                    {
-                        if (_controller.Read(ReleaseButton) == false)
-                        {
-                            _releaseButtonDown = false;
-                            _eventBus.OnReleaseButtonReleased();
-                            _logger.LogInformation("released Release");
-                        }
-                    }
+                    // else
+                    // {
+                    //     if (_controller.Read(ReleaseButton) == true)
+                    //     {
+                    //         _releaseButtonDown = false;
+                    //         _eventBus.OnReleaseButtonReleased();
+                    //         _logger.LogInformation("released Release");
+                    //     }
+                    // }
 
                     _logger.LogInformation("nono");
                     await Task.Delay(500, cancellationToken);
