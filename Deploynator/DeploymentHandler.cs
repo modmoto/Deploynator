@@ -16,6 +16,8 @@ namespace Deploynator
             _azureReleaseRepository = azureReleaseRepository;
             _eventBus = eventBus;
 
+            _eventBus.ReleaseButtonTriggered += (_, _) => TriggerReleases();
+
             _eventBus.UpButtonTriggered += (_, _) => MoveU();
             _eventBus.DownButtonTriggered += (_, _) => MoveDown();
             _eventBus.SelectButtonTriggered += (_, _) => Select();
@@ -32,6 +34,12 @@ namespace Deploynator
 
             SelectedDeloyments = new List<string>();
             SelectedDeloyments = new List<string>();
+        }
+
+        private void TriggerReleases()
+        {
+            _azureReleaseRepository.Do();
+            _eventBus.OnReleasesTriggered(SelectedDeloyments);
         }
 
         public string CurrentSelection => Deloyments[_index];
@@ -66,5 +74,8 @@ namespace Deploynator
 
     public class AzureReleaseRepository
     {
+        public void Do()
+        {
+        }
     }
 }

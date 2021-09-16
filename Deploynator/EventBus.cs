@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Deploynator
 {
@@ -16,6 +17,7 @@ namespace Deploynator
         public event EventHandler PreselectedDeloyment;
         public event EventHandler DeploymentsLoaded;
         public event EventHandler SelectedDeloyment;
+        public event EventHandler ReleasesTriggered;
 
         public virtual void OnReleaseButtonTriggered()
         {
@@ -87,6 +89,22 @@ namespace Deploynator
         {
             var handler = SelectedDeloyment;
             handler?.Invoke(this, new SelectArgs(name));
+        }
+
+        public void OnReleasesTriggered(List<string> selectedDeloyments)
+        {
+            var handler = ReleasesTriggered;
+            handler?.Invoke(this, new DeployArgs(selectedDeloyments));
+        }
+    }
+
+    public class DeployArgs : EventArgs
+    {
+        public List<string> SelectedDeloyments { get; }
+
+        public DeployArgs(List<string> selectedDeloyments)
+        {
+            SelectedDeloyments = selectedDeloyments;
         }
     }
 
