@@ -50,7 +50,7 @@ namespace Deploynator
                 {
                     CheckButtonState();
 
-                    await Task.Delay(1000, cancellationToken);
+                    await Task.Delay(20, cancellationToken);
 
                     _logger.LogInformation( "ingo");
                 }
