@@ -38,7 +38,24 @@ namespace Deploynator
         {
             _lcd.Clear();
             _lcd.SetCursorPosition(0, 0);
-            _lcd.Write(text);
+            var words = text.Split(" ");
+            var line = "";
+            foreach (var word in words)
+            {
+                if (line.Length + word.Length + 1 > 16)
+                {
+                    _lcd.Write(line);
+                    _lcd.SetCursorPosition(0, 1);
+                    line = word;
+                }
+                else
+                {
+                    line += $" {word}";
+                }
+
+            }
+
+            _lcd.Write(line);
         }
     }
 }
