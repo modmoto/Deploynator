@@ -48,7 +48,7 @@ namespace Deploynator
             {
                 try
                 {
-                    await CheckButtonState();
+                    CheckButtonState();
 
                     await Task.Delay(20, cancellationToken);
                 }
@@ -58,19 +58,18 @@ namespace Deploynator
                 }
 
                 count++;
-            } while (!cancellationToken.IsCancellationRequested || count > 10);
+            } while (!cancellationToken.IsCancellationRequested && count < 10);
 
             Clean();
         }
 
-        private async Task CheckButtonState()
+        private void CheckButtonState()
         {
             if (_controller.Read(ReleaseButton) == false && !_releaseButtonDown)
             {
                 _releaseButtonDown = true;
                 _logger.LogInformation("triggered Release");
                 _eventBus.OnReleaseButtonTriggered();
-                await Task.Delay(100);
             }
 
             if (_controller.Read(ReleaseButton) == true && _releaseButtonDown)
