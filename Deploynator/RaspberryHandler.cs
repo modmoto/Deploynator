@@ -32,7 +32,7 @@ namespace Deploynator
             {
                 try
                 {
-                    await CheckButtonState();
+                    CheckButtonState();
 
                     await Task.Delay(20, cancellationToken);
                 }
@@ -45,7 +45,7 @@ namespace Deploynator
             Clean();
         }
 
-        private async Task CheckButtonState()
+        private void CheckButtonState()
         {
             if (_controller.Read(ReleaseButton) == false && !_releaseButtonDown)
             {
