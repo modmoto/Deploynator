@@ -17,14 +17,14 @@ namespace Deploynator
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
-            services.AddServerSideBlazor();
-
             var eventBus = new EventBus();
             services.AddSingleton(eventBus);
             services.AddSingleton(new AudioStream(eventBus));
 
             services.AddHostedService<RaspberryHandler>();
+
+            services.AddRazorPages();
+            services.AddServerSideBlazor();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
