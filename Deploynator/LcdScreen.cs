@@ -22,13 +22,14 @@ namespace Deploynator
                 readWritePin: 1,
                 controller: new GpioController(PinNumberingScheme.Logical, driver));
 
+            WriteText("olol");
         }
 
-        private void WriteText()
+        private void WriteText(string text)
         {
             _lcd.Clear();
             _lcd.SetCursorPosition(0, 0);
-            _lcd.Write(DateTime.Now.ToShortTimeString());
+            _lcd.Write(text);
         }
     }
 }
