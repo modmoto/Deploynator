@@ -24,7 +24,7 @@ namespace Deploynator
             services.AddSingleton(eventBus);
             services.AddSingleton(new AudioStream(eventBus));
 
-            services.AddHostedService<RaspberryHandler>();
+            services.AddSingleton<IHostedService, RaspberryHandler>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
