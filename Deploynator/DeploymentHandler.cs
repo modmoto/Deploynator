@@ -9,8 +9,8 @@ namespace Deploynator
     {
         private readonly IAzureReleaseRepository _azureReleaseRepository;
         private readonly EventBus _eventBus;
-        public List<ReleaseDefinition> ReleaseDefinitions;
-        public List<ReleaseDefinition> SelectedReleaseDefinitions;
+        public List<ReleaseDefinition> ReleaseDefinitions = new();
+        public List<ReleaseDefinition> SelectedReleaseDefinitions = new();
         private int _index;
 
         public DeploymentHandler(IAzureReleaseRepository azureReleaseRepository, EventBus eventBus)
@@ -26,9 +26,6 @@ namespace Deploynator
             _eventBus.DeselectButtonTriggered += (_, _) => Deselect();
 
             ReleaseDefinitions = _azureReleaseRepository.GetReleaseDefinitionsAsync().GetAwaiter().GetResult().ToList();
-
-            SelectedReleaseDefinitions = new List<ReleaseDefinition>();
-            ReleaseDefinitions = new List<ReleaseDefinition>();
         }
 
         private async Task TriggerReleasesAsync(DeployArgs deployArgs)
