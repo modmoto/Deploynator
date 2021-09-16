@@ -1,5 +1,6 @@
 using System.Device.Gpio;
 using System.Device.I2c;
+using System.Net;
 using Iot.Device.CharacterLcd;
 using Iot.Device.Pcx857x;
 
@@ -25,6 +26,8 @@ namespace Deploynator
             {
                 WriteText((args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name);
             };
+
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         }
 
         private void WriteText(string text)
