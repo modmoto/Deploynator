@@ -49,17 +49,17 @@ namespace Deploynator
         {
             if (_controller.Read(ReleaseButton) == false && !_releaseButtonDown)
             {
-                _eventBus.OnReleaseButtonTriggered();
                 _releaseButtonDown = true;
                 _logger.LogInformation("triggered Release");
+                _eventBus.OnReleaseButtonTriggered();
                 await Task.Delay(100);
             }
 
             if (_controller.Read(ReleaseButton) == true && _releaseButtonDown)
             {
                 _releaseButtonDown = false;
-                _eventBus.OnReleaseButtonReleased();
                 _logger.LogInformation("released Release");
+                _eventBus.OnReleaseButtonReleased();
             }
         }
 
