@@ -14,7 +14,7 @@ namespace Deploynator
         private readonly GpioController _controller;
         private bool _releaseButtonDown;
         private const int Led1 = 10;
-        private const int ReleaseButton = 26;
+        private const int ReleaseButton = 24;
 
         public RaspberryHandler(ILogger<RaspberryHandler> logger, EventBus eventBus)
         {
