@@ -20,7 +20,7 @@ namespace Deploynator
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            // services.AddSingleton<EventBus>();
+            services.AddSingleton<EventBus>();
             // services.AddSingleton<AudioStream>();
 
             // services.AddHostedService<RaspberryHandler>();
