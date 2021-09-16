@@ -1,3 +1,5 @@
+using System;
+using System.Net.Http;
 using DevLab.AzureAdapter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,7 +27,9 @@ namespace Deploynator
             services.AddSingleton(eventBus);
             services.AddSingleton(new AudioStream(eventBus));
             services.AddSingleton(new LcdScreen(eventBus));
-            services.AddSingleton(new DeploymentHandler(new AzureReleaseRepository(null), eventBus));
+            var httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("https://atdevops.azure.intern/NgCollection");
+            services.AddSingleton(new DeploymentHandler(new AzureReleaseRepository(httpClient), eventBus));
 
             services.AddHostedService<RaspberryHandler>();
         }
