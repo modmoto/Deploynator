@@ -29,22 +29,26 @@ namespace Deploynator
             services.AddSingleton(new AudioStream(eventBus));
             services.AddSingleton(new LcdScreen(eventBus));
 
-            var handler = new HttpClientHandler();
-            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-            handler.ServerCertificateCustomValidationCallback =
-                (httpRequestMessage, cert, cetChain, policyErrors) =>
-                {
-                    return true;
-                };
-
-            var httpClient = new HttpClient(handler);
-            httpClient.BaseAddress = new Uri("https://atdevops.azure.intern/NgCollection/Devlab/_apis/");
-            var encodedAuth = Encoding.ASCII.GetBytes("nhaeffner:cqaaxxheevlylb5ohe65fnkoxi2g6y7zzybqojrcnq4juwixdx7q");
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(encodedAuth));
+            var httpClient = CreateHttpClient();
 
             services.AddSingleton(new DeploymentHandler(new AzureReleaseRepository(httpClient), eventBus));
 
             services.AddHostedService<RaspberryHandler>();
+        }
+
+        private static HttpClient CreateHttpClient()
+        {
+            var handler = new HttpClientHandler();
+            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+            handler.ServerCertificateCustomValidationCallback =
+                (httpRequestMessage, cert, cetChain, policyErrors) => { return true; };
+
+            var httpClient = new HttpClient(handler);
+            httpClient.BaseAddress = new Uri("https://atdevops.azure.intern/NgCollection/Devlab/_apis/");
+            var encodedAuth = Encoding.ASCII.GetBytes("nhaeffner:cqaaxxheevlylb5ohe65fnkoxi2g6y7zzybqojrcnq4juwixdx7q");
+            httpClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(encodedAuth));
+            return httpClient;
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
