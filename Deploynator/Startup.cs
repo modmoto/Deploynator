@@ -28,7 +28,7 @@ namespace Deploynator
             services.AddSingleton(new AudioStream(eventBus));
             services.AddSingleton(new LcdScreen(eventBus));
             var httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("https://atdevops.azure.intern/NgCollection");
+            httpClient.BaseAddress = new Uri("https://atdevops.azure.intern/NgCollection/Devlab/_apis/");
             services.AddSingleton(new DeploymentHandler(new AzureReleaseRepository(httpClient), eventBus));
 
             services.AddHostedService<RaspberryHandler>();
