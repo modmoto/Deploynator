@@ -56,7 +56,7 @@ namespace Deploynator
                 {
                     _logger.LogError(e, "dead");
                 }
-            } while (cancellationToken.IsCancellationRequested);
+            } while (!cancellationToken.IsCancellationRequested);
 
             Clean();
         }
