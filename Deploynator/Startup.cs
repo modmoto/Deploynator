@@ -1,3 +1,4 @@
+using DevLab.AzureAdapter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +25,7 @@ namespace Deploynator
             services.AddSingleton(eventBus);
             services.AddSingleton(new AudioStream(eventBus));
             services.AddSingleton(new LcdScreen(eventBus));
-            services.AddSingleton(new DeploymentHandler(new AzureReleaseRepository(), eventBus));
+            services.AddSingleton(new DeploymentHandler(new AzureReleaseRepository(null), eventBus));
 
             services.AddHostedService<RaspberryHandler>();
         }

@@ -1,18 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deploynator", "Deploynator\Deploynator.csproj", "{F10A1D3C-51F9-44BA-AE53-43132400B13C}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31410.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Deploynator", "Deploynator\Deploynator.csproj", "{F10A1D3C-51F9-44BA-AE53-43132400B13C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{10A81EE7-20A3-4CAD-A8C4-27A8831B435B}"
-ProjectSection(SolutionItems) = preProject
-	.gitignore = .gitignore
-	azure-pipelines.yml = azure-pipelines.yml
-	docker-compose.yml = docker-compose.yml
-	Dockerfile = Dockerfile
-	README.md = README.md
-	Deploynator.service = Deploynator.service
-	RebuildLatestVersion.sh = RebuildLatestVersion.sh
-	InstallAsService.sh = InstallAsService.sh
-EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		azure-pipelines.yml = azure-pipelines.yml
+		Deploynator.service = Deploynator.service
+		docker-compose.yml = docker-compose.yml
+		Dockerfile = Dockerfile
+		InstallAsService.sh = InstallAsService.sh
+		README.md = README.md
+		RebuildLatestVersion.sh = RebuildLatestVersion.sh
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevLab.AzureAdapter", "DevLab.AzureAdapter\DevLab.AzureAdapter.csproj", "{37F55554-11CD-439F-854A-C78665198469}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevLabs.AzureAdapter.Tests", "DevLabs.AzureAdapter.Tests\DevLabs.AzureAdapter.Tests.csproj", "{4875F71E-36C2-4C13-B9CF-4C54DC46515E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +31,19 @@ Global
 		{F10A1D3C-51F9-44BA-AE53-43132400B13C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F10A1D3C-51F9-44BA-AE53-43132400B13C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F10A1D3C-51F9-44BA-AE53-43132400B13C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37F55554-11CD-439F-854A-C78665198469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37F55554-11CD-439F-854A-C78665198469}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37F55554-11CD-439F-854A-C78665198469}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37F55554-11CD-439F-854A-C78665198469}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4875F71E-36C2-4C13-B9CF-4C54DC46515E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4875F71E-36C2-4C13-B9CF-4C54DC46515E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4875F71E-36C2-4C13-B9CF-4C54DC46515E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4875F71E-36C2-4C13-B9CF-4C54DC46515E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {13B55561-841F-4B40-8968-E93EE042D55D}
 	EndGlobalSection
 EndGlobal

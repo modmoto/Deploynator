@@ -11,4 +11,8 @@
       <PackageReference Include="System.Device.Gpio" Version="1.5.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\DevLab.AzureAdapter\DevLab.AzureAdapter.csproj" />
+    </ItemGroup>
+
 </Project>

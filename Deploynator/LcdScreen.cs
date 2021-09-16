@@ -24,12 +24,7 @@ namespace Deploynator
 
             eventBus.PreselectedDeloyment += (_, args) =>
             {
-                WriteText((args as SelectArgs)?.Name);
-            };
-
-            eventBus.DeploymentsLoaded += (_, args) =>
-            {
-                WriteText((args as SelectArgs)?.Name);
+                WriteText((args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name);
             };
         }
 

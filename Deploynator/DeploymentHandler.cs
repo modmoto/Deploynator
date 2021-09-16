@@ -1,81 +1,70 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using DTOs;
 
 namespace Deploynator
 {
     public class DeploymentHandler
     {
-        private readonly AzureReleaseRepository _azureReleaseRepository;
+        private readonly IAzureReleaseRepository _azureReleaseRepository;
         private readonly EventBus _eventBus;
-        public List<string> Deloyments;
-        public List<string> SelectedDeloyments;
+        public List<ReleaseDefinition> ReleaseDefinitions;
+        public List<ReleaseDefinition> SelectedReleaseDefinitions;
         private int _index;
 
-        public DeploymentHandler(AzureReleaseRepository azureReleaseRepository, EventBus eventBus)
+        public DeploymentHandler(IAzureReleaseRepository azureReleaseRepository, EventBus eventBus)
         {
             _azureReleaseRepository = azureReleaseRepository;
             _eventBus = eventBus;
 
-            _eventBus.ReleaseButtonTriggered += (_, _) => TriggerReleases();
+            _eventBus.ReleaseButtonTriggered += (_, _) => TriggerReleasesAsync();
 
             _eventBus.UpButtonTriggered += (_, _) => MoveU();
             _eventBus.DownButtonTriggered += (_, _) => MoveDown();
             _eventBus.SelectButtonTriggered += (_, _) => Select();
             _eventBus.DeselectButtonTriggered += (_, _) => Deselect();
 
-            Deloyments = new List<string>
-            {
-                "Partner Srvice",
-                "Messaging Service",
-                "Activity Minutes Service"
-            };
+            var releases = _azureReleaseRepository.GetReleaseDefinitionsAsync().GetAwaiter().GetResult();
 
-            _eventBus.OnDeploymentsLoaded(Deloyments[0]);
+            _eventBus.OnDeploymentsLoaded(releases);
 
-            SelectedDeloyments = new List<string>();
-            SelectedDeloyments = new List<string>();
+            SelectedReleaseDefinitions = new List<ReleaseDefinition>();
         }
 
-        private void TriggerReleases()
+        private async Task TriggerReleasesAsync()
         {
-            _azureReleaseRepository.Do();
-            _eventBus.OnReleasesTriggered(SelectedDeloyments);
+            var result = await _azureReleaseRepository.DeployToProdAsync(1);
+            _eventBus.OnReleasesTriggered(SelectedReleaseDefinitions);
         }
 
-        public string CurrentSelection => Deloyments[_index];
+        public string CurrentSelection => ReleaseDefinitions[_index].Name;
 
         public void Select()
         {
-            SelectedDeloyments.Add(Deloyments[_index]);
-            SelectedDeloyments = SelectedDeloyments.Distinct().ToList();
-            _eventBus.OnSelectedDeloyment(Deloyments[_index]);
+            SelectedReleaseDefinitions.Add(ReleaseDefinitions[_index]);
+            SelectedReleaseDefinitions = SelectedReleaseDefinitions.Distinct().ToList();
+            _eventBus.OnSelectedDeloyment(ReleaseDefinitions[_index]);
         }
 
         public void MoveDown()
         {
             if (_index <= 0) return;
             _index--;
-            _eventBus.OnPreselectedDeloyment(Deloyments[_index]);
+            _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index]);
         }
 
         public void MoveU()
         {
-            if (_index >= Deloyments.Count) return;
+            if (_index >= ReleaseDefinitions.Count) return;
             _index++;
-            _eventBus.OnPreselectedDeloyment(Deloyments[_index]);
+            _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index]);
         }
 
         public void Deselect()
         {
-            SelectedDeloyments = SelectedDeloyments.Where(d => d !=Deloyments[_index]).ToList();
+            SelectedReleaseDefinitions = SelectedReleaseDefinitions.Where(d => d.Id !=ReleaseDefinitions[_index].Id).ToList();
         }
 
-    }
-
-    public class AzureReleaseRepository
-    {
-        public void Do()
-        {
-        }
     }
 }

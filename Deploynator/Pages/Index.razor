@@ -3,16 +3,16 @@
 <h1>@_handler.CurrentSelection</h1>
 
 <h1>All Deployments</h1>
-@foreach (var d in _handler.Deloyments)
+@foreach (var d in _handler.ReleaseDefinitions)
 {
-    <h4>@d</h4>
+    <h4>@d.Name</h4>
 }
 
 
 <h1>Selected Deployments</h1>
-@foreach (var d in _handler.SelectedDeloyments)
+@foreach (var d in _handler.SelectedReleaseDefinitions)
 {
-    <h4>@d</h4>
+    <h4>@d.Name</h4>
 }
 
 <button @onclick="() => Do(() => _handler.MoveU())">ub</button>

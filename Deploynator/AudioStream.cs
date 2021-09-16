@@ -17,7 +17,7 @@ namespace Deploynator
 
             eventBus.SelectedDeloyment += (_, args) =>
             {
-                Play($"{(args as SelectArgs)?.Name} selected for Deployment, get ready to fuck");
+                Play($"{(args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name} selected for Deployment, get ready to fuck");
             };
 
             var config = SpeechConfig.FromSubscription("990a253fc3cb487e8f02867fcd3d86c2", "francecentral");

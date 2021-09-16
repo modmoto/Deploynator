@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DTOs;
 
 namespace Deploynator
 {
@@ -25,10 +26,10 @@ namespace Deploynator
             handler?.Invoke(this, EventArgs.Empty);
         }
 
-        public virtual void OnDeploymentsLoaded(string name)
+        public virtual void OnDeploymentsLoaded(IEnumerable<ReleaseDefinition> releaseDefinitions)
         {
             var handler = DeploymentsLoaded;
-            handler?.Invoke(this, new SelectArgs(name));
+            handler?.Invoke(this, new DeployArgs(releaseDefinitions));
         }
 
         public virtual void OnUpButtonTriggered()
@@ -79,42 +80,42 @@ namespace Deploynator
             handler?.Invoke(this, EventArgs.Empty);
         }
 
-        public virtual void OnPreselectedDeloyment(string name)
+        public virtual void OnPreselectedDeloyment(ReleaseDefinition releaseDefinition)
         {
             var handler = PreselectedDeloyment;
-            handler?.Invoke(this, new SelectArgs(name));
+            handler?.Invoke(this, new SelectReleaseDefinitionArgs(releaseDefinition));
         }
 
-        public virtual void OnSelectedDeloyment(string name)
+        public virtual void OnSelectedDeloyment(ReleaseDefinition releaseDefinition)
         {
             var handler = SelectedDeloyment;
-            handler?.Invoke(this, new SelectArgs(name));
+            handler?.Invoke(this, new SelectReleaseDefinitionArgs(releaseDefinition));
         }
 
-        public void OnReleasesTriggered(List<string> selectedDeloyments)
+        public void OnReleasesTriggered(List<ReleaseDefinition> releaseDefinitions)
         {
             var handler = ReleasesTriggered;
-            handler?.Invoke(this, new DeployArgs(selectedDeloyments));
+            handler?.Invoke(this, new DeployArgs(releaseDefinitions));
         }
     }
 
     public class DeployArgs : EventArgs
     {
-        public List<string> SelectedDeloyments { get; }
+        public IEnumerable<ReleaseDefinition> SelectedDeloyments { get; }
 
-        public DeployArgs(List<string> selectedDeloyments)
+        public DeployArgs(IEnumerable<ReleaseDefinition> selectedDeloyments)
         {
             SelectedDeloyments = selectedDeloyments;
         }
     }
 
-    public class SelectArgs : EventArgs
+    public class SelectReleaseDefinitionArgs : EventArgs
     {
-        public string Name { get; }
+        public ReleaseDefinition ReleaseDefinition { get; }
 
-        public SelectArgs(string name)
+        public SelectReleaseDefinitionArgs(ReleaseDefinition releaseDefinition)
         {
-            Name = name;
+            ReleaseDefinition = releaseDefinition;
         }
     }
 }
