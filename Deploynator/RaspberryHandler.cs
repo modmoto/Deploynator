@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Deploynator
 {
-    public class RaspberryHandler : IHostedService
+    public class RaspberryHandler : BackgroundService
     {
         private readonly ILogger<RaspberryHandler> _logger;
         private readonly EventBus _eventBus;
@@ -39,7 +39,7 @@ namespace Deploynator
             //led an
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Service started");
             _eventBus.OnServiceStarted();
@@ -50,7 +50,9 @@ namespace Deploynator
                 {
                     CheckButtonState();
 
-                    await Task.Delay(20, cancellationToken);
+                    await Task.Delay(1000, cancellationToken);
+
+                    _logger.LogInformation( "ingo");
                 }
                 catch (Exception e)
                 {
