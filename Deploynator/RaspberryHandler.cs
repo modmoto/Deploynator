@@ -2,7 +2,6 @@ using System;
 using System.Device.Gpio;
 using System.Threading;
 using System.Threading.Tasks;
-using Iot.Device.CharacterLcd;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
