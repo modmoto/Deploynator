@@ -34,6 +34,7 @@ namespace Deploynator
                     _eventBus.OnReleaseButtonTriggered();
                     _releaseButtonDown = true;
                     _logger.LogInformation("triggered Release");
+                    await Task.Delay(100);
                 }
                 else
                 {
@@ -45,8 +46,9 @@ namespace Deploynator
                     }
                 }
 
-                await Task.Delay(10);
-            } while (!cancellationToken.IsCancellationRequested);
+                _logger.LogInformation("nono");
+                await Task.Delay(500);
+            } while (true);
         }
 
         private void TurnOffLed(int pin)
