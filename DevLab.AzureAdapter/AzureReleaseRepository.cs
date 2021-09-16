@@ -113,10 +113,13 @@ namespace DevLab.AzureAdapter
 
         public async Task<IEnumerable<ReleaseDefinition>> GetReleaseDefinitionsAsync()
         {
-            var result = await _httpClient.GetAsync($"release/definitions?api-version=6.0");
+            var requestUri = $"release/definitions?api-version=6.0";
+            var result = await _httpClient.GetAsync(requestUri);
             result.EnsureSuccessStatusCode();
 
             Console.WriteLine(result.StatusCode);
+            Console.WriteLine(_httpClient.BaseAddress);
+            Console.WriteLine(result.RequestMessage?.RequestUri);
 
             var jsonContent = await result.Content.ReadAsStringAsync();
 
