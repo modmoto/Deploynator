@@ -29,7 +29,7 @@ namespace Deploynator
         {
             do
             {
-                if (_controller.Read(ReleaseButton) == false && _releaseButtonDown == false)
+                if (_controller.Read(ReleaseButton) == false)
                 {
                     _eventBus.OnReleaseButtonTriggered();
                     _releaseButtonDown = true;
