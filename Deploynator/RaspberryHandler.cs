@@ -32,25 +32,9 @@ namespace Deploynator
             {
                 try
                 {
-                    if (_controller.Read(ReleaseButton) == false && _releaseButtonDown == false)
-                    {
-                        _eventBus.OnReleaseButtonTriggered();
-                        _releaseButtonDown = true;
-                        _logger.LogInformation("triggered Release");
-                        await Task.Delay(100, cancellationToken);
-                    }
-                    else
-                    {
-                        if (_controller.Read(ReleaseButton) == true)
-                        {
-                            _releaseButtonDown = false;
-                            _eventBus.OnReleaseButtonReleased();
-                            _logger.LogInformation("released Release");
-                        }
-                    }
+                    await CheckButtonState();
 
-                    _logger.LogInformation("nono");
-                    await Task.Delay(500, cancellationToken);
+                    await Task.Delay(20, cancellationToken);
                 }
                 catch (Exception e)
                 {
@@ -59,6 +43,23 @@ namespace Deploynator
             } while (!cancellationToken.IsCancellationRequested);
 
             Clean();
+        }
+
+        private async Task CheckButtonState()
+        {
+            if (_controller.Read(ReleaseButton) == false && !_releaseButtonDown)
+            {
+                _eventBus.OnReleaseButtonTriggered();
+                _releaseButtonDown = true;
+                _logger.LogInformation("triggered Release");
+            }
+
+            if (_controller.Read(ReleaseButton) == true && _releaseButtonDown)
+            {
+                _releaseButtonDown = false;
+                _eventBus.OnReleaseButtonReleased();
+                _logger.LogInformation("released Release");
+            }
         }
 
         private void TurnOffLed(int pin)
