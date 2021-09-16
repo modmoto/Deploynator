@@ -2,11 +2,8 @@
 
 <button @onclick="() => RasperrySound()">play device ready</button>
 
-@inject AudioStream _audioStream
-
 @code {
     private async Task RasperrySound()
     {
-        await _audioStream.Play("Device ready, awaiting deployment sequence");
     }
 }
