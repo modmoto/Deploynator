@@ -124,7 +124,7 @@ namespace DevLab.AzureAdapter
             var jsonContent = await result.Content.ReadAsStringAsync();
 
             Console.WriteLine(jsonContent);
-            return JsonSerializer.Deserialize<ReleaseDefinitionList>(jsonContent).Value;
+            return JsonSerializer.Deserialize<ReleaseDefinitionList>(jsonContent, _jsonOptions).Value;
         }
     }
 }
