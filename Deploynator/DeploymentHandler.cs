@@ -32,6 +32,8 @@ namespace Deploynator
             SelectedDeloyments = new List<string>();
         }
 
+        public string CurrentSelection => Deloyments[_index];
+
         public void Select()
         {
             SelectedDeloyments.Add(Deloyments[_index]);
