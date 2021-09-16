@@ -27,7 +27,7 @@ namespace Deploynator
                 WriteText((args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name);
             };
 
-            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
         }
 
         private void WriteText(string text)

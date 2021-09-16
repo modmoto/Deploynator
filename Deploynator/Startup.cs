@@ -23,6 +23,7 @@ namespace Deploynator
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
             var eventBus = new EventBus();
             services.AddSingleton(eventBus);
