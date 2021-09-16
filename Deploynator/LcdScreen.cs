@@ -50,7 +50,7 @@ namespace Deploynator
                 }
                 else
                 {
-                    line += $" {word}";
+                    line += $"{word} ";
                 }
 
             }
