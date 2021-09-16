@@ -1,4 +1,4 @@
 ﻿#!/bin/bash
 
 git pull
-dotnet runt
+dotnet run
