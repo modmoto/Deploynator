@@ -21,6 +21,7 @@ namespace Deploynator
                 backlightBrightness: 0.1f,
                 readWritePin: 1,
                 controller: new GpioController(PinNumberingScheme.Logical, driver));
+
         }
 
         private void WriteText()

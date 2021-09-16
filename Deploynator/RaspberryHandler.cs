@@ -21,7 +21,7 @@ namespace Deploynator
         private const int Led1 = 10;
         private const int ReleaseButton = 26;
         private const int UpButton = 36;
-        private const int DownButton = 36;
+        private const int DownButton = 38;
         private const int SelectButton = 40;
         private const int DeselectButton = 37;
 
