@@ -1,6 +1,8 @@
+using System;
 using System.Device.Gpio;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -8,37 +10,46 @@ namespace Deploynator
 {
     public class RaspberryHandler : IHostedService
     {
-        private readonly ILogger<RaspberryHandler> _logger;
-        private readonly EventBus _eventBus;
         private GpioController _controller;
         private bool _releaseButtonPressed;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private ILogger<RaspberryHandler> _logger;
         private const int Led1 = 10;
         private const int ReleaseButton = 26;
 
-        public RaspberryHandler(ILogger<RaspberryHandler> logger, EventBus eventBus)
+
+        public RaspberryHandler(IServiceScopeFactory serviceScopeFactory)
         {
-            _logger = logger;
-            _eventBus = eventBus;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            _controller = new GpioController(PinNumberingScheme.Board);
+            using var scope = _serviceScopeFactory.CreateScope();
 
-            _controller.OpenPin(Led1, PinMode.Output);
-            _controller.OpenPin(ReleaseButton, PinMode.InputPullUp);
-
-            while(true)
+            do
             {
-                CheckReleaseButtonPressed();
-
-                await Task.Delay(5);
-
-                if (cancellationToken.IsCancellationRequested)
+                try
                 {
-                    break;
+                    _controller = new GpioController(PinNumberingScheme.Board);
+
+                    _controller.OpenPin(Led1, PinMode.Output);
+                    _controller.OpenPin(ReleaseButton, PinMode.InputPullUp);
+
+                    _logger = scope.ServiceProvider.GetService<ILogger<RaspberryHandler>>();
+
+                    CheckReleaseButtonPressed();
+
+                    await Task.Delay(5);
                 }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Rasbi dead");
+                }
+
+                await Task.Delay(5, cancellationToken);
             }
+            while (!cancellationToken.IsCancellationRequested);
         }
 
         private void CheckReleaseButtonPressed()
@@ -46,7 +57,7 @@ namespace Deploynator
             if (_controller.Read(ReleaseButton) == false && _releaseButtonPressed == false)
             {
                 _releaseButtonPressed = true;
-                _eventBus.OnReleaseTriggered();
+                // _eventBus.OnReleaseTriggered();
                 _logger.LogInformation("Release triggered");
             }
             else

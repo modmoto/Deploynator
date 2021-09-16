@@ -20,9 +20,10 @@ namespace Deploynator
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            services.AddSingleton<EventBus>(); services.AddSingleton<AudioStream>();
+            services.AddSingleton<EventBus>();
+            services.AddSingleton<AudioStream>();
 
-            // services.AddHostedService<RaspberryHandler>();
+            services.AddHostedService<RaspberryHandler>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
