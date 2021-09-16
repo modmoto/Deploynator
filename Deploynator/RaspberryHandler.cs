@@ -9,16 +9,16 @@ namespace Deploynator
     public class RaspberryHandler : IHostedService
     {
         private readonly ILogger<RaspberryHandler> _logger;
-        private readonly EventBus _eventBus;
+        // private readonly EventBus _eventBus;
         private readonly GpioController _controller;
         private bool _releaseButtonPressed;
         private const int Led1 = 10;
         private const int ReleaseButton = 26;
 
-        public RaspberryHandler(ILogger<RaspberryHandler> logger, EventBus eventBus)
+        public RaspberryHandler(ILogger<RaspberryHandler> logger)
         {
             _logger = logger;
-            _eventBus = eventBus;
+            // _eventBus = eventBus;
             _controller = new GpioController(PinNumberingScheme.Board);
 
             _controller.OpenPin(Led1, PinMode.Output);
@@ -45,7 +45,7 @@ namespace Deploynator
             if (_controller.Read(ReleaseButton) == false && _releaseButtonPressed == false)
             {
                 _releaseButtonPressed = true;
-                _eventBus.OnReleaseTriggered();
+                // _eventBus.OnReleaseTriggered();
                 _logger.LogInformation("Release triggered");
             }
             else
