@@ -43,7 +43,6 @@ namespace Deploynator
         {
             _logger.LogInformation("Service started");
             _eventBus.OnServiceStarted();
-            var count = 0;
             do
             {
                 try
@@ -51,16 +50,13 @@ namespace Deploynator
                     CheckButtonState();
 
                     await Task.Delay(20, cancellationToken);
-
-                    _logger.LogInformation( "ingo");
                 }
                 catch (Exception e)
                 {
                     _logger.LogError(e, "dead");
                 }
 
-                // count++;
-            } while (!cancellationToken.IsCancellationRequested && count < 10);
+            } while (!cancellationToken.IsCancellationRequested);
 
             Clean();
         }
