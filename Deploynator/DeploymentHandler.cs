@@ -56,7 +56,7 @@ namespace Deploynator
 
         public void MoveU()
         {
-            if (_index >= ReleaseDefinitions.Count) return;
+            if (_index >= ReleaseDefinitions.Count - 1) return;
             _index++;
             _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index]);
         }
@@ -64,6 +64,7 @@ namespace Deploynator
         public void Deselect()
         {
             SelectedReleaseDefinitions = SelectedReleaseDefinitions.Where(d => d.Id !=ReleaseDefinitions[_index].Id).ToList();
+            _eventBus.OnDeselectedDeloyment(ReleaseDefinitions[_index]);
         }
 
     }
