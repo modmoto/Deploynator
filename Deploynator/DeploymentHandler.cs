@@ -60,7 +60,7 @@ namespace Deploynator
 
         public void MoveU()
         {
-            if (_index >= Deloyments.Count) return;
+            if (_index >= Deloyments.Count - 1) return;
             _index++;
             _eventBus.OnPreselectedDeloyment(Deloyments[_index]);
         }
