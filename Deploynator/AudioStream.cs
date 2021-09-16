@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CognitiveServices.Speech;
 
@@ -35,8 +36,10 @@ namespace Deploynator
         private async Task PlayReleases(EventArgs args)
         {
             var deployArgs = args as DeployArgs;
-            await Play($"Starting to deploy services: {string.Join(", ", deployArgs.SelectedDeloyments)} in t minus 5 seconds. 5, 4, 3, 2, 1, deploy!");
-            _eventBus.OnReleaseCountdownFinished(deployArgs.SelectedDeloyments);
+            var deloyments = deployArgs.SelectedDeloyments;
+            var strings = string.Join(", ", deloyments.Select(d => d.Name));
+            await Play($"Starting to deploy services: {strings} in t minus 5 seconds. 5, 4, 3, 2, 1, deploy!");
+            _eventBus.OnReleaseCountdownFinished(deloyments);
         }
 
         public async Task Play(string message)
