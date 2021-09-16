@@ -23,6 +23,8 @@ namespace Deploynator
             var eventBus = new EventBus();
             services.AddSingleton(eventBus);
             services.AddSingleton(new AudioStream(eventBus));
+            services.AddSingleton(new LcdScreen(eventBus));
+            services.AddSingleton(new DeploymentHandler(null, eventBus));
 
             services.AddHostedService<RaspberryHandler>();
         }

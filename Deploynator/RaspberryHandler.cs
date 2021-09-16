@@ -1,10 +1,8 @@
 using System;
 using System.Device.Gpio;
-using System.Device.I2c;
 using System.Threading;
 using System.Threading.Tasks;
 using Iot.Device.CharacterLcd;
-using Iot.Device.Pcx857x;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -16,9 +14,16 @@ namespace Deploynator
         private readonly EventBus _eventBus;
         private readonly GpioController _controller;
         private bool _releaseButtonDown;
-        private readonly Lcd2004 _lcd;
+        private bool _upButtonDown;
+        private bool _downButtonDown;
+        private bool _selectButtonDown;
+        private bool _deselectButtonDown;
         private const int Led1 = 10;
         private const int ReleaseButton = 26;
+        private const int UpButton = 36;
+        private const int DownButton = 36;
+        private const int SelectButton = 40;
+        private const int DeselectButton = 37;
 
         public RaspberryHandler(ILogger<RaspberryHandler> logger, EventBus eventBus)
         {
@@ -31,16 +36,6 @@ namespace Deploynator
 
             _eventBus.ReleaseFailed += (_, _) => OnReleaseFailed();
             _eventBus.ReleaseSuceeded += (_, _) => OnReleaseSuceeded();
-
-            var i2c = I2cDevice.Create(new I2cConnectionSettings(1, 0x27));
-            var driver = new Pcf8574(i2c);
-            _lcd = new Lcd2004(registerSelectPin: 0,
-                enablePin: 2,
-                dataPins: new int[] { 4, 5, 6, 7 },
-                backlightPin: 3,
-                backlightBrightness: 0.1f,
-                readWritePin: 1,
-                controller: new GpioController(PinNumberingScheme.Logical, driver));
         }
 
         private void OnReleaseSuceeded()
@@ -61,8 +56,11 @@ namespace Deploynator
             {
                 try
                 {
-                    CheckButtonState();
-                    WriteText();
+                    CheckButtonState(ReleaseButton, ref _releaseButtonDown, () => _eventBus.OnReleaseButtonTriggered());
+                    CheckButtonState(DownButton, ref _downButtonDown, () => _eventBus.OnDownButtonTriggered());
+                    CheckButtonState(UpButton, ref _upButtonDown, () => _eventBus.OnUpButtonTriggered());
+                    CheckButtonState(SelectButton, ref _selectButtonDown, () => _eventBus.OnSelectButtonTriggered());
+                    CheckButtonState(DeselectButton, ref _deselectButtonDown, () => _eventBus.OnDeselectButtonTriggered());
 
                     await Task.Delay(20, cancellationToken);
                 }
@@ -76,27 +74,19 @@ namespace Deploynator
             Clean();
         }
 
-        private void WriteText()
+        private void CheckButtonState(int button, ref bool buttonVar, Action eventTrigger)
         {
-            _lcd.Clear();
-            _lcd.SetCursorPosition(0, 0);
-            _lcd.Write(DateTime.Now.ToShortTimeString());
-        }
-
-        private void CheckButtonState()
-        {
-            if (_controller.Read(ReleaseButton) == false && !_releaseButtonDown)
+            if (_controller.Read(button) == false && !buttonVar)
             {
-                _releaseButtonDown = true;
-                _logger.LogInformation("triggered Release");
-                _eventBus.OnReleaseButtonTriggered();
+                buttonVar = true;
+                _logger.LogInformation($"triggered {button}");
+                eventTrigger.Invoke();
             }
 
-            if (_controller.Read(ReleaseButton) == true && _releaseButtonDown)
+            if (_controller.Read(button) == true && buttonVar)
             {
-                _releaseButtonDown = false;
-                _logger.LogInformation("released Release");
-                _eventBus.OnReleaseButtonReleased();
+                buttonVar = false;
+                _logger.LogInformation($"released {button}");
             }
         }
 
