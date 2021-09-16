@@ -46,8 +46,6 @@ namespace Deploynator
                     }
                 }
 
-                _logger.LogInformation("nono");
-
                 await Task.Delay(10);
             } while (!cancellationToken.IsCancellationRequested);
         }
