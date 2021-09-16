@@ -43,6 +43,7 @@ namespace Deploynator
         {
             _logger.LogInformation("Service started");
             _eventBus.OnServiceStarted();
+            var count = 0;
             do
             {
                 try
@@ -55,7 +56,9 @@ namespace Deploynator
                 {
                     _logger.LogError(e, "dead");
                 }
-            } while (!cancellationToken.IsCancellationRequested);
+
+                count++;
+            } while (!cancellationToken.IsCancellationRequested || count > 10);
 
             Clean();
         }
