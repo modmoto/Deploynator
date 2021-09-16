@@ -4,10 +4,11 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using DevLab.AzureAdapter;
-using DTOs;
+using DevLab.AzureAdapter.DTOs;
 using FluentAssertions;
 using RichardSzalay.MockHttp;
 using Xunit;
+using Environment = DevLab.AzureAdapter.DTOs.Environment;
 
 namespace DevLabs.AzureAdapter.Tests
 {
@@ -49,8 +50,8 @@ namespace DevLabs.AzureAdapter.Tests
                 Value = new List<ReleaseInformation> {
                     new ReleaseInformation {
                         Id = 1,
-                        Environments = new List<DTOs.Environment> {
-                            new DTOs.Environment {
+                        Environments = new List<Environment> {
+                            new Environment {
                                 Id = 0,
                                 Name = "INT",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED
@@ -77,13 +78,13 @@ namespace DevLabs.AzureAdapter.Tests
                 Value = new List<ReleaseInformation> {
                     new ReleaseInformation {
                         Id = 1,
-                        Environments = new List<DTOs.Environment> {
-                            new DTOs.Environment {
+                        Environments = new List<Environment> {
+                            new Environment {
                                 Id = 0,
                                 Name = "INT",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED
                             },
-                            new DTOs.Environment {
+                            new Environment {
                                 Id = 1,
                                 Name = "PROD",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_NOT_STARTED,
@@ -111,13 +112,13 @@ namespace DevLabs.AzureAdapter.Tests
                 Value = new List<ReleaseInformation> {
                     new ReleaseInformation {
                         Id = 1,
-                        Environments = new List<DTOs.Environment> {
-                            new DTOs.Environment {
+                        Environments = new List<Environment> {
+                            new Environment {
                                 Id = 0,
                                 Name = "INT",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED
                             },
-                            new DTOs.Environment {
+                            new Environment {
                                 Id = 1,
                                 Name = "PROD",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_NOT_STARTED,
@@ -149,13 +150,13 @@ namespace DevLabs.AzureAdapter.Tests
                 Value = new List<ReleaseInformation> {
                     new ReleaseInformation {
                         Id = 1,
-                        Environments = new List<DTOs.Environment> {
-                            new DTOs.Environment {
+                        Environments = new List<Environment> {
+                            new Environment {
                                 Id = 0,
                                 Name = "INT",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED
                             },
-                            new DTOs.Environment {
+                            new Environment {
                                 Id = 1,
                                 Name = "PROD",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_NOT_STARTED,
@@ -201,13 +202,13 @@ namespace DevLabs.AzureAdapter.Tests
                 Value = new List<ReleaseInformation> {
                     new ReleaseInformation {
                         Id = 1,
-                        Environments = new List<DTOs.Environment> {
-                            new DTOs.Environment {
+                        Environments = new List<Environment> {
+                            new Environment {
                                 Id = 0,
                                 Name = "INT",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED
                             },
-                            new DTOs.Environment {
+                            new Environment {
                                 Id = 1,
                                 Name = "PROD",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_NOT_STARTED,

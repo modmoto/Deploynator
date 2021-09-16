@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DTOs;
+using DevLab.AzureAdapter.DTOs;
 
-public interface IAzureReleaseRepository{
-    Task<IEnumerable<ReleaseDefinition>> GetReleaseDefinitionsAsync();
+namespace DevLab.AzureAdapter
+{
+    public interface IAzureReleaseRepository{
+        Task<IEnumerable<ReleaseDefinition>> GetReleaseDefinitionsAsync();
 
-    Task<DeploymentResult> DeployToProdAsync(int releaseDefinitionId);
+        Task<DeploymentResult> DeployToProdAsync(int releaseDefinitionId);
+    }
 }

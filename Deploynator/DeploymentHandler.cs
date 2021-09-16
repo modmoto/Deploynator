@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DTOs;
+using DevLab.AzureAdapter;
+using DevLab.AzureAdapter.DTOs;
 
 namespace Deploynator
 {

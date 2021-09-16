@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using DTOs;
+using DevLab.AzureAdapter.DTOs;
 
 namespace DevLab.AzureAdapter
 {
@@ -116,7 +116,11 @@ namespace DevLab.AzureAdapter
             var result = await _httpClient.GetAsync($"release/definitions?api-version=6.0");
             result.EnsureSuccessStatusCode();
 
+            Console.WriteLine(result.StatusCode);
+
             var jsonContent = await result.Content.ReadAsStringAsync();
+
+            Console.WriteLine(jsonContent);
             return JsonSerializer.Deserialize<ReleaseDefinitionList>(jsonContent).Value;
         }
     }

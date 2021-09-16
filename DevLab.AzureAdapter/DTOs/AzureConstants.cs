@@ -1,4 +1,4 @@
-namespace DTOs
+namespace DevLab.AzureAdapter.DTOs
 {
     public static class AzureConstants
     {

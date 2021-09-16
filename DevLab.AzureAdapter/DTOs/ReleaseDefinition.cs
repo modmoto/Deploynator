@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace DTOs
+namespace DevLab.AzureAdapter.DTOs
 {
     public class ReleaseDefinition
     {
