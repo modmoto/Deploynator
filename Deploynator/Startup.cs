@@ -38,7 +38,7 @@ namespace Deploynator
                 };
 
             var httpClient = new HttpClient(handler);
-            httpClient.BaseAddress = new Uri("http://atdevops.azure.intern/NgCollection/Devlab/_apis/");
+            httpClient.BaseAddress = new Uri("https://atdevops.azure.intern/NgCollection/Devlab/_apis/");
             services.AddSingleton(new DeploymentHandler(new AzureReleaseRepository(httpClient), eventBus));
 
             services.AddHostedService<RaspberryHandler>();
