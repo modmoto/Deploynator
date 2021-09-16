@@ -1,8 +1,5 @@
 @page "/"
 
-<button @onclick="() => RasperrySound()">play device ready</button>
-<div>@_isDown</div>
-
 <h1>@_handler.CurrentSelection</h1>
 
 <h1>All Deployments</h1>
@@ -23,46 +20,21 @@
 <button @onclick="() => Do(() => _handler.Select())">select</button>
 <button @onclick="() => Do(() => _handler.Deselect())">unselect</button>
 
-@inject AudioStream _audioStream
 @inject EventBus _eventBus
 @inject DeploymentHandler _handler
 
 @code {
-    private string _isDown = "ub";
-
     protected override void OnInitialized()
     {
-        _eventBus.ReleaseButtonTriggered += (_, _) => OnReleaseButtonTriggered();
-        _eventBus.ReleaseButtonReleased += (_, _) => OnReleaseButtonReleased();
+        _eventBus.ReleaseButtonTriggered += (_, _) => InvokeAsync(() => StateHasChanged());
+        _eventBus.ReleaseButtonReleased += (_, _) => InvokeAsync(() => StateHasChanged());
 
-        _eventBus.SelectedDeloyment += (_, _) => StateHasChanged();
-        _eventBus.PreselectedDeloyment += (_, _) => StateHasChanged();
-        _eventBus.DownButtonTriggered += (_, _) => StateHasChanged();
-        _eventBus.UpButtonTriggered += (_, _) => StateHasChanged();
+        _eventBus.SelectedDeloyment += (_, _) => InvokeAsync(() => StateHasChanged());
+        _eventBus.PreselectedDeloyment += (_, _) => InvokeAsync(() => StateHasChanged());
+        _eventBus.DownButtonTriggered += (_, _) => InvokeAsync(() => StateHasChanged());
+        _eventBus.UpButtonTriggered += (_, _) => InvokeAsync(() => StateHasChanged());
     }
 
-    private void OnReleaseButtonTriggered()
-    {
-        InvokeAsync(() =>
-        {
-            _isDown = "down";
-            StateHasChanged();
-        });
-    }
-
-    private void OnReleaseButtonReleased()
-    {
-        InvokeAsync(() =>
-        {
-            _isDown = "ub";
-            StateHasChanged();
-        });
-    }
-
-    private async Task RasperrySound()
-    {
-        await _audioStream.Play("Device ready, awaiting deployment sequence");
-    }
 
     private void Do(Action action)
     {
