@@ -33,6 +33,10 @@ namespace Deploynator
 
             _controller.OpenPin(Led1, PinMode.Output);
             _controller.OpenPin(ReleaseButton, PinMode.InputPullUp);
+            _controller.OpenPin(UpButton, PinMode.InputPullUp);
+            _controller.OpenPin(DownButton, PinMode.InputPullUp);
+            _controller.OpenPin(SelectButton, PinMode.InputPullUp);
+            _controller.OpenPin(DeselectButton, PinMode.InputPullUp);
 
             _eventBus.ReleaseFailed += (_, _) => OnReleaseFailed();
             _eventBus.ReleaseSuceeded += (_, _) => OnReleaseSuceeded();
