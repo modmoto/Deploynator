@@ -22,7 +22,10 @@ namespace Deploynator
                 readWritePin: 1,
                 controller: new GpioController(PinNumberingScheme.Logical, driver));
 
-            WriteText("olol");
+            eventBus.PreselectedDeloyment += (_, args) =>
+            {
+                WriteText((args as SelectArgs)?.Name);
+            };
         }
 
         private void WriteText(string text)

@@ -14,6 +14,11 @@ namespace Deploynator
             eventBus.ReleaseFailed += (_, _) => Play("Release failed, leave the building immediatly");
             eventBus.ReleaseSuceeded += (_, _) => Play("Release suceeded, time to open that bottle of champagne");
 
+            eventBus.SelectedDeloyment += (_, args) =>
+            {
+                Play($"{(args as SelectArgs)?.Name} selected for Deployment, get ready to fuck");
+            };
+
             var config = SpeechConfig.FromSubscription("990a253fc3cb487e8f02867fcd3d86c2", "francecentral");
             config.SpeechSynthesisVoiceName = "en-US-SaraNeural";
             _synthesizer = new SpeechSynthesizer(config);
