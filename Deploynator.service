@@ -7,8 +7,10 @@ ExecStart=/srv/Deploynator/Deploynator
 SyslogIdentifier=Deploynator
 WorkingDirectory=/srv/Deploynator
 
+# you can also run it as pi, which would be cool, but pi can not open ports below 1024, those are reserved for root in linux
 User=root
 
+# To figure out this value, run 'env | grep DOTNET_ROOT' when dotnet has been loaded into your shell.
 Environment=DOTNET_ROOT=/opt/dotnet
 Environment="ASPNETCORE_URLS=http://0.0.0.0:80;https://0.0.0.0:443"
 
