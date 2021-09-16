@@ -10,35 +10,41 @@ namespace Deploynator
 {
     public class RaspberryHandler : IHostedService
     {
-        private GpioController _controller;
         private bool _releaseButtonPressed;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
         private ILogger<RaspberryHandler> _logger;
         private const int Led1 = 10;
         private const int ReleaseButton = 26;
 
 
-        public RaspberryHandler(IServiceScopeFactory serviceScopeFactory)
+        public RaspberryHandler(ILogger<RaspberryHandler> logger)
         {
-            _serviceScopeFactory = serviceScopeFactory;
+            _logger = logger;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            using var scope = _serviceScopeFactory.CreateScope();
-
             do
             {
                 try
                 {
-                    _controller = new GpioController(PinNumberingScheme.Board);
+                    var controller = new GpioController(PinNumberingScheme.Board);
 
-                    _controller.OpenPin(Led1, PinMode.Output);
-                    _controller.OpenPin(ReleaseButton, PinMode.InputPullUp);
+                    controller.OpenPin(Led1, PinMode.Output);
+                    controller.OpenPin(ReleaseButton, PinMode.InputPullUp);
 
-                    _logger = scope.ServiceProvider.GetService<ILogger<RaspberryHandler>>();
-
-                    CheckReleaseButtonPressed();
+                    if (controller.Read(ReleaseButton) == false && _releaseButtonPressed == false)
+                    {
+                        _releaseButtonPressed = true;
+                        // _eventBus.OnReleaseTriggered();
+                        _logger.LogInformation("Release triggered");
+                    }
+                    else
+                    {
+                        if (controller.Read(ReleaseButton) == true)
+                        {
+                            _releaseButtonPressed = false;
+                        }
+                    }
 
                     await Task.Delay(5);
                 }
@@ -52,37 +58,20 @@ namespace Deploynator
             while (!cancellationToken.IsCancellationRequested);
         }
 
-        private void CheckReleaseButtonPressed()
-        {
-            if (_controller.Read(ReleaseButton) == false && _releaseButtonPressed == false)
-            {
-                _releaseButtonPressed = true;
-                // _eventBus.OnReleaseTriggered();
-                _logger.LogInformation("Release triggered");
-            }
-            else
-            {
-                if (_controller.Read(ReleaseButton) == true)
-                {
-                    _releaseButtonPressed = false;
-                }
-            }
-        }
-
-        private void TurnOffLed(int pin)
-        {
-            _controller.Write(pin, PinValue.Low);
-        }
-
-        private void TurnOnLed(int pin)
-        {
-            _controller.Write(pin, PinValue.High);
-        }
+        // private void TurnOffLed(int pin)
+        // {
+        //     _controller.Write(pin, PinValue.Low);
+        // }
+        //
+        // private void TurnOnLed(int pin)
+        // {
+        //     _controller.Write(pin, PinValue.High);
+        // }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _controller.ClosePin(Led1);
-            _controller.ClosePin(ReleaseButton);
+            // _controller.ClosePin(Led1);
+            // _controller.ClosePin(ReleaseButton);
             return Task.CompletedTask;
         }
     }
