@@ -20,6 +20,7 @@ namespace Deploynator
             _eventBus = eventBus;
 
             _eventBus.ReleaseCountdownFinished += (_, args) => TriggerReleasesAsync((DeployArgs) args);
+            _eventBus.ReleaseButtonTriggered += (_, _) => _eventBus.OnReleasesTriggered(SelectedReleaseDefinitions);
 
             _eventBus.UpButtonTriggered += (_, _) => MoveU();
             _eventBus.DownButtonTriggered += (_, _) => MoveDown();
