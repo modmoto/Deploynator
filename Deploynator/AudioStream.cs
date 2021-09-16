@@ -22,6 +22,11 @@ namespace Deploynator
                 Play($"{(args as SelectArgs)?.Name} selected for Deployment, get ready to fuck");
             };
 
+            _eventBus.DeselectedDeloyment += (_, args) =>
+            {
+                Play($"{(args as SelectArgs)?.Name} removed from Deployment, bitch please, where the balls at");
+            };
+
             var config = SpeechConfig.FromSubscription("990a253fc3cb487e8f02867fcd3d86c2", "francecentral");
             config.SpeechSynthesisVoiceName = "en-US-SaraNeural";
             _synthesizer = new SpeechSynthesizer(config);

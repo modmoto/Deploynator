@@ -68,8 +68,8 @@ namespace Deploynator
         public void Deselect()
         {
             SelectedDeloyments = SelectedDeloyments.Where(d => d !=Deloyments[_index]).ToList();
+            _eventBus.OnDeselectedDeloyment(Deloyments[_index]);
         }
-
     }
 
     public class AzureReleaseRepository
