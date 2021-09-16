@@ -1,3 +1,4 @@
+using System;
 using System.Device.Gpio;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,25 +30,32 @@ namespace Deploynator
         {
             do
             {
-                if (_controller.Read(ReleaseButton) == false)
-                {
-                    _eventBus.OnReleaseButtonTriggered();
-                    _releaseButtonDown = true;
-                    _logger.LogInformation("triggered Release");
-                    await Task.Delay(100);
-                }
-                else
+                try
                 {
                     if (_controller.Read(ReleaseButton) == false)
                     {
-                        _releaseButtonDown = false;
-                        _eventBus.OnReleaseButtonReleased();
-                        _logger.LogInformation("released Release");
+                        _eventBus.OnReleaseButtonTriggered();
+                        _releaseButtonDown = true;
+                        _logger.LogInformation("triggered Release");
+                        await Task.Delay(100);
                     }
-                }
+                    else
+                    {
+                        if (_controller.Read(ReleaseButton) == false)
+                        {
+                            _releaseButtonDown = false;
+                            _eventBus.OnReleaseButtonReleased();
+                            _logger.LogInformation("released Release");
+                        }
+                    }
 
-                _logger.LogInformation("nono");
-                await Task.Delay(500);
+                    _logger.LogInformation("nono");
+                    await Task.Delay(500);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "dead");
+                }
             } while (cancellationToken.IsCancellationRequested);
 
             Clean();

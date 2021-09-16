@@ -15,7 +15,7 @@ namespace Deploynator
 
         public virtual void OnReleaseButtonReleased()
         {
-            var handler = ReleaseButtonTriggered;
+            var handler = ReleaseButtonReleased;
             handler?.Invoke(this, EventArgs.Empty);
         }
     }
