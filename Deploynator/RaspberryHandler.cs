@@ -28,6 +28,8 @@ namespace Deploynator
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Service started");
+            _eventBus.OnServiceStarted();
             do
             {
                 try

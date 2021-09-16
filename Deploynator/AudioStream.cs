@@ -11,10 +11,16 @@ namespace Deploynator
         public AudioStream(EventBus eventBus)
         {
             eventBus.ReleaseButtonTriggered += (_, _) => OnReleaseButtonTriggered();
+            eventBus.ServiceStarted += (_, _) => OnServiceStarted();
             var config = SpeechConfig.FromSubscription("990a253fc3cb487e8f02867fcd3d86c2", "francecentral");
             // config.SpeechSynthesisVoiceName = "en-US-AriaNeural";
             config.SpeechSynthesisVoiceName = "en-US-SaraNeural";
             _synthesizer = new SpeechSynthesizer(config);
+        }
+
+        private async Task OnServiceStarted()
+        {
+            await Play("Deployment ready, awaiting deployment sequence");
         }
 
         private async void OnReleaseButtonTriggered()
