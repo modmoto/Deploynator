@@ -11,13 +11,15 @@ namespace Deploynator
     {
         private readonly ILogger<RaspberryHandler> _logger;
         private readonly GpioController _controller;
-        private const int Button1 = 24;
+        private const int Led1 = 10;
+        private const int Button1 = 26;
 
         public RaspberryHandler(ILogger<RaspberryHandler> logger)
         {
             _logger = logger;
             _controller = new GpioController(PinNumberingScheme.Board);
 
+            _controller.OpenPin(Led1, PinMode.Output);
             _controller.OpenPin(Button1, PinMode.InputPullUp);
         }
 
@@ -55,6 +57,7 @@ namespace Deploynator
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
+            _controller.ClosePin(Led1);
             _controller.ClosePin(Button1);
             return Task.CompletedTask;
         }
