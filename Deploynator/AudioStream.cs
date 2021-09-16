@@ -17,9 +17,9 @@ namespace Deploynator
             _synthesizer = new SpeechSynthesizer(config);
         }
 
-        private void OnReleaseButtonTriggered()
+        private async void OnReleaseButtonTriggered()
         {
-            Play("Release triggered").Wait();
+            await Play("Release triggered");
         }
 
         public async Task Play(string message)
