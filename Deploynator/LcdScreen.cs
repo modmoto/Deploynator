@@ -1,5 +1,6 @@
 using System.Device.Gpio;
 using System.Device.I2c;
+using System.Linq;
 using Iot.Device.CharacterLcd;
 using Iot.Device.Pcx857x;
 
@@ -26,6 +27,10 @@ namespace Deploynator
                 WriteText((args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name);
             };
 
+            eventBus.ReleaseLoaded += (_, args) =>
+            {
+                WriteText((args as DeployArgs)?.SelectedDeloyments.First().Name);
+            };
 
         }
 
