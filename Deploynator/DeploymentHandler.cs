@@ -36,6 +36,7 @@ namespace Deploynator
         {
             SelectedDeloyments.Add(Deloyments[_index]);
             SelectedDeloyments = SelectedDeloyments.Distinct().ToList();
+            _eventBus.OnSelectedDeloyment(Deloyments[_index]);
         }
 
         public void MoveDown()
