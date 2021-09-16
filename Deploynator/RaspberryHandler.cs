@@ -32,7 +32,7 @@ namespace Deploynator
             {
                 try
                 {
-                    CheckButtonState();
+                    await CheckButtonState();
 
                     await Task.Delay(20, cancellationToken);
                 }
@@ -45,13 +45,14 @@ namespace Deploynator
             Clean();
         }
 
-        private void CheckButtonState()
+        private async Task CheckButtonState()
         {
             if (_controller.Read(ReleaseButton) == false && !_releaseButtonDown)
             {
                 _eventBus.OnReleaseButtonTriggered();
                 _releaseButtonDown = true;
                 _logger.LogInformation("triggered Release");
+                await Task.Delay(100);
             }
 
             if (_controller.Read(ReleaseButton) == true && _releaseButtonDown)
