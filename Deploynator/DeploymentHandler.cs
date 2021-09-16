@@ -39,12 +39,18 @@ namespace Deploynator
 
         private async Task TriggerReleasesAsync(DeployArgs deployArgs)
         {
-            foreach (var releaseDefinition in deployArgs.SelectedDeloyments)
+            var tasks = deployArgs.SelectedDeloyments.Select(t =>  _azureReleaseRepository.DeployToProdAsync(t.Id));
+
+            var results = await Task.WhenAll(tasks);
+
+            if (results.All(r => r.Deployed))
             {
-                var result = await _azureReleaseRepository.DeployToProdAsync(releaseDefinition.Id);
+                _eventBus.OnReleaseSuceeded();
             }
-            
-            _eventBus.OnReleaseSuceeded();
+            else
+            {
+                _eventBus.OnReleaseFailed();
+            }
         }
 
         public string CurrentSelection => ReleaseDefinitions[_index].Name;
