@@ -116,10 +116,7 @@ namespace DevLab.AzureAdapter
             var requestUri = $"release/definitions?api-version=6.0";
             var result = await _httpClient.GetAsync(requestUri);
             result.EnsureSuccessStatusCode();
-
             var jsonContent = await result.Content.ReadAsStringAsync();
-
-            Console.WriteLine(jsonContent);
             return JsonSerializer.Deserialize<ReleaseDefinitionList>(jsonContent, _jsonOptions).Value;
         }
     }
