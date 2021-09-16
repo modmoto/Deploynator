@@ -48,7 +48,9 @@ namespace Deploynator
 
                 _logger.LogInformation("nono");
                 await Task.Delay(500);
-            } while (true);
+            } while (cancellationToken.IsCancellationRequested);
+
+            Clean();
         }
 
         private void TurnOffLed(int pin)
@@ -63,9 +65,14 @@ namespace Deploynator
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
+            Clean();
+            return Task.CompletedTask;
+        }
+
+        private void Clean()
+        {
             _controller.ClosePin(Led1);
             _controller.ClosePin(ReleaseButton);
-            return Task.CompletedTask;
         }
     }
 }
