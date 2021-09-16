@@ -20,9 +20,8 @@ namespace Deploynator
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            var eventBus = new EventBus();
-            services.AddSingleton(eventBus);
-            services.AddSingleton(new AudioStream(eventBus));
+            services.AddSingleton<EventBus>();
+            services.AddSingleton<AudioStream>();
 
             services.AddSingleton<IHostedService, RaspberryHandler>();
         }
