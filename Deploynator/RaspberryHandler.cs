@@ -34,7 +34,6 @@ namespace Deploynator
                     _eventBus.OnReleaseButtonTriggered();
                     _releaseButtonDown = true;
                     _logger.LogInformation("triggered Release");
-                    await Task.Delay(1000);
                 }
                 else
                 {
