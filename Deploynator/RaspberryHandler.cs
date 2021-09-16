@@ -1,3 +1,4 @@
+using System;
 using System.Device.Gpio;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,21 +21,30 @@ namespace Deploynator
         {
             do
             {
-                var controller = new GpioController(PinNumberingScheme.Board);
-
-                // controller.OpenPin(10, PinMode.Output);
-                controller.OpenPin(26, PinMode.InputPullUp);
-
-                if (controller.Read(26) == false)
+                try
                 {
-                    _logger.LogInformation("Release triggered");
-                }
-                else
-                {
-                    _logger.LogInformation("no");
-                }
+                    var controller = new GpioController(PinNumberingScheme.Board);
 
-                await Task.Delay(5, cancellationToken);
+                    // controller.OpenPin(10, PinMode.Output);
+                    controller.ClosePin(10);
+                    controller.ClosePin(26);
+                    controller.OpenPin(26, PinMode.InputPullUp);
+
+                    if (controller.Read(26) == false)
+                    {
+                        _logger.LogInformation("Release triggered");
+                    }
+                    else
+                    {
+                        _logger.LogInformation("no");
+                    }
+
+                    await Task.Delay(5, cancellationToken);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "dead");
+                }
             }
             while (!cancellationToken.IsCancellationRequested);
         }
