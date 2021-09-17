@@ -23,7 +23,7 @@ namespace Deploynator
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            Thread.Sleep(5000);
+            Thread.Sleep(10000);
 
             var eventBus = new EventBus();
             services.AddSingleton(eventBus);
