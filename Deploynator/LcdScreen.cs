@@ -24,10 +24,28 @@ namespace Deploynator
 
             eventBus.PreselectedDeloyment += (_, args) =>
             {
-                WriteText((args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name);
+                var release = args as SelectReleaseDefinitionArgs;
+                if (release != null)
+                {
+                    WriteText($"{(release.IsSelected ? "X" : "")}{release.Index} {release.ReleaseDefinition.Name}");
+                }
+            };
+
+            eventBus.SelectedDeloyment += (_, args) =>
+            {
+                var release = args as SelectReleaseDefinitionArgs;
+                if (release != null)
+                {
+                    WriteText($"X{release.Index} {release.ReleaseDefinition.Name}");
+                }
             };
 
             eventBus.ReleaseLoaded += (_, args) =>
+            {
+                WriteText((args as DeployArgs)?.SelectedDeloyments.First().Name);
+            };
+
+            eventBus.ReleaseSucceeded += (_, args) =>
             {
                 WriteText((args as DeployArgs)?.SelectedDeloyments.First().Name);
             };

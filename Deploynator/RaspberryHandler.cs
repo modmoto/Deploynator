@@ -38,7 +38,7 @@ namespace Deploynator
             _controller.OpenPin(DeselectButton, PinMode.InputPullUp);
 
             _eventBus.ReleaseFailed += (_, _) => OnReleaseFailed();
-            _eventBus.ReleaseSuceeded += (_, _) => OnReleaseSuceeded();
+            _eventBus.ReleaseSucceeded += (_, _) => OnReleaseSuceeded();
         }
 
         private void OnReleaseSuceeded()

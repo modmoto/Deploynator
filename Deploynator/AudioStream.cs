@@ -16,7 +16,7 @@ namespace Deploynator
             _eventBus.ReleasesTriggered += (_, args) => PlayReleases(args);
             _eventBus.ServiceStarted += (_, _) => Play("Deployment ready, awaiting deployment sequence");
             _eventBus.ReleaseFailed += (_, _) => Play("Release failed, please stay calm and leave the building in an orderly fashion");
-            _eventBus.ReleaseSuceeded += (_, _) => Play("Release succeeded, time to open that bottle of champagne");
+            _eventBus.ReleaseSucceeded += (_, _) => Play("Release succeeded, time to open that bottle of champagne");
 
             _eventBus.SelectedDeloyment += (_, args) =>
             {

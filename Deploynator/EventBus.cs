@@ -13,7 +13,7 @@ namespace Deploynator
         public event EventHandler DeselectButtonTriggered;
         public event EventHandler ReleaseButtonReleased;
         public event EventHandler ServiceStarted;
-        public event EventHandler ReleaseSuceeded;
+        public event EventHandler ReleaseSucceeded;
         public event EventHandler ReleaseFailed;
         public event EventHandler PreselectedDeloyment;
         public event EventHandler SelectedDeloyment;
@@ -64,9 +64,9 @@ namespace Deploynator
             handler?.Invoke(this, EventArgs.Empty);
         }
 
-        public virtual void OnReleaseSuceeded()
+        public virtual void OnReleaseSucceeded()
         {
-            var handler = ReleaseSuceeded;
+            var handler = ReleaseSucceeded;
             handler?.Invoke(this, EventArgs.Empty);
         }
 
@@ -76,16 +76,16 @@ namespace Deploynator
             handler?.Invoke(this, EventArgs.Empty);
         }
 
-        public virtual void OnPreselectedDeloyment(ReleaseDefinition releaseDefinition)
+        public virtual void OnPreselectedDeloyment(ReleaseDefinition releaseDefinition, int index, bool isSelected)
         {
             var handler = PreselectedDeloyment;
-            handler?.Invoke(this, new SelectReleaseDefinitionArgs(releaseDefinition));
+            handler?.Invoke(this, new SelectReleaseDefinitionArgs(releaseDefinition, index, isSelected));
         }
 
-        public virtual void OnSelectedDeloyment(ReleaseDefinition releaseDefinition)
+        public virtual void OnSelectedDeloyment(ReleaseDefinition releaseDefinition, int index)
         {
             var handler = SelectedDeloyment;
-            handler?.Invoke(this, new SelectReleaseDefinitionArgs(releaseDefinition));
+            handler?.Invoke(this, new SelectReleaseDefinitionArgs(releaseDefinition, index, true));
         }
 
         public void OnReleasesTriggered(List<ReleaseDefinition> releaseDefinitions)
@@ -100,10 +100,10 @@ namespace Deploynator
             handler?.Invoke(this, new DeployArgs(selectedDeloyments));
         }
 
-        public void OnDeselectedDeloyment(ReleaseDefinition releaseDefinition)
+        public void OnDeselectedDeloyment(ReleaseDefinition releaseDefinition, int index)
         {
             var handler = DeselectedDeloyment;
-            handler?.Invoke(this, new SelectReleaseDefinitionArgs(releaseDefinition));
+            handler?.Invoke(this, new SelectReleaseDefinitionArgs(releaseDefinition, index, false));
         }
 
         public void OnReleaseLoaded(List<ReleaseDefinition> releaseDefinitions)
@@ -126,10 +126,14 @@ namespace Deploynator
     public class SelectReleaseDefinitionArgs : EventArgs
     {
         public ReleaseDefinition ReleaseDefinition { get; }
+        public int Index { get; }
+        public bool IsSelected { get; }
 
-        public SelectReleaseDefinitionArgs(ReleaseDefinition releaseDefinition)
+        public SelectReleaseDefinitionArgs(ReleaseDefinition releaseDefinition, int index, bool isSelected)
         {
             ReleaseDefinition = releaseDefinition;
+            Index = index;
+            IsSelected = isSelected;
         }
     }
 }

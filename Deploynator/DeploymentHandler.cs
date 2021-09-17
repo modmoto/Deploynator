@@ -28,6 +28,7 @@ namespace Deploynator
             _eventBus.DeselectButtonTriggered += (_, _) => Deselect();
 
             _eventBus.ServiceStarted += (_, _) => LoadReleases();
+            _eventBus.ReleaseSucceeded += (_, _) => SelectedReleaseDefinitions = new List<ReleaseDefinition>();
         }
 
         public async Task LoadReleases()
@@ -45,7 +46,7 @@ namespace Deploynator
 
             if (results.All(r => r.Deployed))
             {
-                _eventBus.OnReleaseSuceeded();
+                _eventBus.OnReleaseSucceeded();
             }
             else
             {
@@ -59,27 +60,32 @@ namespace Deploynator
         {
             SelectedReleaseDefinitions.Add(ReleaseDefinitions[_index]);
             SelectedReleaseDefinitions = SelectedReleaseDefinitions.Distinct().ToList();
-            _eventBus.OnSelectedDeloyment(ReleaseDefinitions[_index]);
+            _eventBus.OnSelectedDeloyment(ReleaseDefinitions[_index], _index);
         }
 
         public void MoveDown()
         {
             if (_index <= 0) return;
             _index--;
-            _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index]);
+            _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index], _index, IsSelected());
+        }
+
+        private bool IsSelected()
+        {
+            return SelectedReleaseDefinitions.Any(s => s.Id == ReleaseDefinitions[_index].Id);
         }
 
         public void MoveU()
         {
             if (_index >= ReleaseDefinitions.Count - 1) return;
             _index++;
-            _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index]);
+            _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index], _index, IsSelected());
         }
 
         public void Deselect()
         {
             SelectedReleaseDefinitions = SelectedReleaseDefinitions.Where(d => d.Id !=ReleaseDefinitions[_index].Id).ToList();
-            _eventBus.OnDeselectedDeloyment(ReleaseDefinitions[_index]);
+            _eventBus.OnDeselectedDeloyment(ReleaseDefinitions[_index], _index);
         }
 
     }
