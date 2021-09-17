@@ -20,10 +20,25 @@
 <button @onclick="() => Do(() => _handler.Select())">select</button>
 <button @onclick="() => Do(() => _handler.Deselect())">unselect</button>
 
+<select>
+    @foreach (var o in languages)
+    {
+        <option @onselect="() => _setting.Person = o">@o</option>
+    }
+</select>
+
 @inject EventBus _eventBus
 @inject DeploymentHandler _handler
+@inject LanguageSetting _setting
 
 @code {
+
+    private List<string> languages = new List<string>
+    {
+        "en-US-SaraNeural",
+        "es-MX-JorgeNeural",
+    };
+
     protected override void OnInitialized()
     {
         _eventBus.ReleaseButtonTriggered += (_, _) => InvokeAsync(() => StateHasChanged());

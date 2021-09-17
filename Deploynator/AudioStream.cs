@@ -8,11 +8,12 @@ namespace Deploynator
     public class AudioStream
     {
         private readonly EventBus _eventBus;
-        private readonly SpeechSynthesizer _synthesizer;
+        private LanguageSetting _languageSetting;
 
-        public AudioStream(EventBus eventBus)
+        public AudioStream(EventBus eventBus, LanguageSetting languageSetting)
         {
             _eventBus = eventBus;
+            _languageSetting = languageSetting;
             _eventBus.ReleasesTriggered += (_, args) => PlayReleases(args);
             _eventBus.ServiceStarted += (_, _) => Play("Deployment ready, awaiting deployment sequence");
             _eventBus.ReleaseFailed += (_, _) => Play("Release failed, please stay calm and leave the building in an orderly fashion");
@@ -27,10 +28,6 @@ namespace Deploynator
             {
                 Play($"{(args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name} removed from Deployment, bitch please");
             };
-
-            var config = SpeechConfig.FromSubscription("990a253fc3cb487e8f02867fcd3d86c2", "francecentral");
-            config.SpeechSynthesisVoiceName = "en-US-SaraNeural";
-            _synthesizer = new SpeechSynthesizer(config);
         }
 
         private async Task PlayReleases(EventArgs args)
@@ -50,7 +47,10 @@ namespace Deploynator
 
         public async Task Play(string message)
         {
-            await _synthesizer.SpeakTextAsync(message);
+            var config = SpeechConfig.FromSubscription("990a253fc3cb487e8f02867fcd3d86c2", "francecentral");
+            config.SpeechSynthesisVoiceName = _languageSetting.Person;
+            var synthesizer = new SpeechSynthesizer(config);
+            await synthesizer.SpeakTextAsync(message);
         }
 
         private async Task PlaySuccessfulDeployments(DeploymentResultsArgs deploymentResultsArgs)
@@ -68,5 +68,10 @@ namespace Deploynator
 
             await Play("Status report finished! The cake is a lie!:");
         }
+    }
+
+    public class LanguageSetting
+    {
+        public string Person { get; set; } = "en-US-SaraNeural";
     }
 }
