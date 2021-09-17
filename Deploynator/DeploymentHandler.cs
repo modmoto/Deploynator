@@ -58,6 +58,8 @@ namespace Deploynator
 
         public void Select()
         {
+            if (ReleaseDefinitions.Count <= _index) return;
+
             SelectedReleaseDefinitions.Add(ReleaseDefinitions[_index]);
             SelectedReleaseDefinitions = SelectedReleaseDefinitions.Distinct().ToList();
             _eventBus.OnSelectedDeloyment(ReleaseDefinitions[_index], _index);

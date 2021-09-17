@@ -42,14 +42,16 @@ namespace Deploynator
 
             eventBus.ReleaseLoaded += (_, args) =>
             {
-                WriteText("1" + (args as DeployArgs)?.SelectedDeloyments.First().Name);
+                var first = (args as DeployArgs)?.SelectedDeloyments.FirstOrDefault();
+                if (first != null)
+                {
+                    WriteText("1" + first.Name);
+                }
+                else
+                {
+                    WriteText("No deployment available");
+                }
             };
-
-            eventBus.ReleaseSucceeded += (_, args) =>
-            {
-                WriteText((args as DeployArgs)?.SelectedDeloyments.First().Name);
-            };
-
         }
 
         private void WriteText(string text)
