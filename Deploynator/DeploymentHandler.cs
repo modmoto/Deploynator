@@ -67,7 +67,7 @@ namespace Deploynator
         {
             if (_index <= 0) return;
             _index--;
-            _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index], _index, IsSelected());
+            _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index], _index + 1, IsSelected());
         }
 
         private bool IsSelected()
@@ -79,13 +79,13 @@ namespace Deploynator
         {
             if (_index >= ReleaseDefinitions.Count - 1) return;
             _index++;
-            _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index], _index, IsSelected());
+            _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index], _index + 1, IsSelected());
         }
 
         public void Deselect()
         {
-            SelectedReleaseDefinitions = SelectedReleaseDefinitions.Where(d => d.Id !=ReleaseDefinitions[_index].Id).ToList();
-            _eventBus.OnDeselectedDeloyment(ReleaseDefinitions[_index], _index);
+            SelectedReleaseDefinitions = SelectedReleaseDefinitions.Where(d => d.Id != ReleaseDefinitions[_index].Id).ToList();
+            _eventBus.OnDeselectedDeloyment(ReleaseDefinitions[_index], _index + 1);
         }
 
     }
