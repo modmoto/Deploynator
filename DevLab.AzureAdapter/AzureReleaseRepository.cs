@@ -165,6 +165,7 @@ namespace DevLab.AzureAdapter
             var result = await _httpClient.GetAsync(requestUri);
             result.EnsureSuccessStatusCode();
             var jsonContent = await result.Content.ReadAsStringAsync();
+            Console.WriteLine(jsonContent);
             var releaseDefinitions = JsonSerializer.Deserialize<ReleaseDefinitionList>(jsonContent, _jsonOptions).Value;
 
             var validReleases = new List<ReleaseDefinition>();
