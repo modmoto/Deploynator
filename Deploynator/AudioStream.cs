@@ -66,7 +66,15 @@ namespace Deploynator
                     $"{deploymentResultsArg.ReleaseName} finished with status: {resultMessage}");
             }
 
-            await Play("Status report finished! The cake is a lie!:");
+            if (_languageSetting.Person == "es-MX-JorgeNeural")
+            {
+                await Play("Status report finished! Happy cinco de mayo!");
+
+            }
+            else
+            {
+                await Play("Status report finished! The cake is a lie!:");
+            }
         }
     }
 
