@@ -28,7 +28,7 @@ namespace Deploynator
             _eventBus.DeselectButtonTriggered += (_, _) => Deselect();
 
             _eventBus.ServiceStarted += (_, _) => LoadReleases();
-            _eventBus.ReleaseSucceeded += (_, _) => LoadReleases();
+            _eventBus.ReleasesSucceeded += (_, _) => LoadReleases();
         }
 
         public async Task LoadReleases()
