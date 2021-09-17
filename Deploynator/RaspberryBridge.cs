@@ -22,8 +22,8 @@ namespace Deploynator
 
         private const int UpButton = 33;
         private const int DownButton = 31;
-        private const int SelectButton = 37;
-        private const int DeselectButton = 35;
+        private const int SelectButton = 35;
+        private const int DeselectButton = 37;
 
         public RaspberryBridge(ILogger<RaspberryBridge> logger, EventBus eventBus)
         {
