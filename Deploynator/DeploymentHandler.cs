@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using DevLab.AzureAdapter;
 using DevLab.AzureAdapter.DTOs;
@@ -33,6 +35,7 @@ namespace Deploynator
 
         public async Task LoadReleases()
         {
+            Console.WriteLine("Load releases called");
             var releaseDefinitions = await _azureReleaseRepository.GetReleaseDefinitionsAsync();
             ReleaseDefinitions = releaseDefinitions.ToList();
             SelectedReleaseDefinitions = new List<ReleaseDefinition>();
