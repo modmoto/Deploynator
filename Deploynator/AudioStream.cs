@@ -43,7 +43,7 @@ namespace Deploynator
             foreach (var countDownValue in countDown)
             {
                 await Play(countDownValue);
-                await Task.Delay(1000);
+                await Task.Delay(600);
             }
             _eventBus.OnReleaseCountdownFinished(deloyments);
         }

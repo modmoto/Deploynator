@@ -28,12 +28,13 @@ namespace Deploynator
 
             var eventBus = new EventBus();
             services.AddSingleton(eventBus);
-            services.AddSingleton(new AudioStream(eventBus));
+            var audioStream = new AudioStream(eventBus);
+            services.AddSingleton(audioStream);
             services.AddSingleton(new LcdScreen(eventBus));
 
             var httpClient = CreateHttpClient();
 
-            services.AddSingleton(new DeploymentHandler(new AzureReleaseRepository(httpClient), eventBus));
+            services.AddSingleton(new DeploymentHandler(new AzureReleaseRepository(httpClient), eventBus, audioStream));
 
             services.AddHostedService<RaspberryHandler>();
         }

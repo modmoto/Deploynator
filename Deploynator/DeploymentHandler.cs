@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Channels;
+using System.Threading;
 using System.Threading.Tasks;
 using DevLab.AzureAdapter;
 using DevLab.AzureAdapter.DTOs;
@@ -12,14 +12,18 @@ namespace Deploynator
     {
         private readonly IAzureReleaseRepository _azureReleaseRepository;
         private readonly EventBus _eventBus;
+        private readonly AudioStream _audioStream;
+        private readonly RandomFactsApiAdapter _randomFactsApiAdapter;
         public List<ReleaseDefinition> ReleaseDefinitions = new();
         public List<ReleaseDefinition> SelectedReleaseDefinitions = new();
         private int _index;
 
-        public DeploymentHandler(IAzureReleaseRepository azureReleaseRepository, EventBus eventBus)
+        public DeploymentHandler(IAzureReleaseRepository azureReleaseRepository, EventBus eventBus, AudioStream audioStream)
         {
             _azureReleaseRepository = azureReleaseRepository;
             _eventBus = eventBus;
+            _audioStream = audioStream;
+            _randomFactsApiAdapter = new RandomFactsApiAdapter();
 
             _eventBus.ReleaseCountdownFinished += (_, args) => TriggerReleasesAsync((DeployArgs)args);
             _eventBus.ReleaseButtonTriggered += (_, _) => _eventBus.OnReleasesTriggered(SelectedReleaseDefinitions);
@@ -44,9 +48,39 @@ namespace Deploynator
 
         private async Task TriggerReleasesAsync(DeployArgs deployArgs)
         {
+            var cancellationTokenSource = new CancellationTokenSource();
+            StartWaitingSequence(cancellationTokenSource.Token);
+            
             var results = _azureReleaseRepository.DeployReleasesToProdAsync(deployArgs.SelectedDeloyments);
 
+            cancellationTokenSource.Cancel();
             _eventBus.OnReleasesSucceeded(results);
+        }
+
+        private void StartWaitingSequence(CancellationToken cancellationToken)
+        {
+
+            try
+            {
+                _audioStream.Play("To ease your pain of waiting, let me tell you some excellent jokes:").GetAwaiter().GetResult();
+                Task.Delay(500);
+
+                Task.Run(async () =>
+                {
+                    while (true)
+                    {
+                        var waitingText = await _randomFactsApiAdapter.GetRandomFactAsync();
+                        await Task.Delay(2000);
+                        await _audioStream.Play($"{waitingText}. HA HA HA. Very funny!");
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
+
+                }, cancellationToken);
+            }
+            catch
+            {
+                // ignored
+            }
         }
 
         public string CurrentSelection => ReleaseDefinitions.Count > _index ? ReleaseDefinitions[_index].Name : "No deployment available";
