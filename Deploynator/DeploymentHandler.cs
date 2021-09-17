@@ -28,13 +28,14 @@ namespace Deploynator
             _eventBus.DeselectButtonTriggered += (_, _) => Deselect();
 
             _eventBus.ServiceStarted += (_, _) => LoadReleases();
-            _eventBus.ReleaseSucceeded += (_, _) => SelectedReleaseDefinitions = new List<ReleaseDefinition>();
+            _eventBus.ReleaseSucceeded += (_, _) => LoadReleases();
         }
 
         public async Task LoadReleases()
         {
             var releaseDefinitions = await _azureReleaseRepository.GetReleaseDefinitionsAsync();
             ReleaseDefinitions = releaseDefinitions.ToList();
+            SelectedReleaseDefinitions = new List<ReleaseDefinition>();
             _eventBus.OnReleaseLoaded(ReleaseDefinitions);
         }
 
