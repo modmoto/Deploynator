@@ -1,4 +1,5 @@
 ﻿#!/bin/bash
+git pull
 sudo mkdir /srv/Deploynator
 sudo systemctl stop Deploynator
 sudo chown pi /srv/Deploynator

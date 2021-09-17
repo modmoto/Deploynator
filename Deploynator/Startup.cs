@@ -45,7 +45,7 @@ namespace Deploynator
 
             var httpClient = new HttpClient(handler);
             httpClient.BaseAddress = new Uri("https://atdevops.azure.intern/NgCollection/Devlab/_apis/");
-            var encodedAuth = Encoding.ASCII.GetBytes("nhaeffner:cqaaxxheevlylb5ohe65fnkoxi2g6y7zzybqojrcnq4juwixdx7q");
+            var encodedAuth = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("AZURE_TOKEN") ?? "lel");
             httpClient.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(encodedAuth));
             return httpClient;

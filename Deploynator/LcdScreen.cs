@@ -42,14 +42,16 @@ namespace Deploynator
 
             eventBus.ReleaseLoaded += (_, args) =>
             {
-                WriteText("1" + (args as DeployArgs)?.SelectedDeloyments.First().Name);
+                var first = (args as DeployArgs)?.SelectedDeloyments.FirstOrDefault();
+                if (first != null)
+                {
+                    WriteText("1" + first.Name);
+                }
+                else
+                {
+                    WriteText("No deployment available");
+                }
             };
-
-            eventBus.ReleaseSucceeded += (_, args) =>
-            {
-                WriteText((args as DeployArgs)?.SelectedDeloyments.First().Name);
-            };
-
         }
 
         private void WriteText(string text)
@@ -60,7 +62,7 @@ namespace Deploynator
             var line = "";
             foreach (var word in words)
             {
-                if (line.Length + word.Length + 1 > 16)
+                if (line.Length + word.Length > 16)
                 {
                     _lcd.Write(line);
                     _lcd.SetCursorPosition(0, 1);

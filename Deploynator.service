@@ -13,6 +13,7 @@ User=root
 # To figure out this value, run 'env | grep DOTNET_ROOT' when dotnet has been loaded into your shell.
 Environment=DOTNET_ROOT=/opt/dotnet
 Environment="ASPNETCORE_URLS=http://0.0.0.0:80;https://0.0.0.0:443"
+Environment="AZURE_TOKEN=lel"
 
 [Install]
 WantedBy=multi-user.target
