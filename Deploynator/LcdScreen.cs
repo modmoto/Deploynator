@@ -62,7 +62,7 @@ namespace Deploynator
             var line = "";
             foreach (var word in words)
             {
-                if (line.Length + word.Length + 1 > 16)
+                if (line.Length + word.Length > 16)
                 {
                     _lcd.Write(line);
                     _lcd.SetCursorPosition(0, 1);
