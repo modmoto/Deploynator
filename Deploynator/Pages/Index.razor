@@ -20,12 +20,13 @@
 <button @onclick="() => Do(() => _handler.Select())">select</button>
 <button @onclick="() => Do(() => _handler.Deselect())">unselect</button>
 
-<select>
-    @foreach (var o in languages)
+<select class="custom-select" @onchange="OnLanguegeChanged" title="Region is required ">  
+    <option value="Select" selected disabled="disabled">(Choose person)</option>
+    @foreach (var language in languages)
     {
-        <option @onselect="() => _setting.Person = o">@o</option>
+        <option value="@language"> @language</option>
     }
-</select>
+</select>  
 
 @inject EventBus _eventBus
 @inject DeploymentHandler _handler
@@ -58,4 +59,8 @@
         StateHasChanged();
     }
 
+    private void OnLanguegeChanged(ChangeEventArgs e) {
+        var value = e.Value.ToString();
+        _setting.Person = value;
+    }
 }
