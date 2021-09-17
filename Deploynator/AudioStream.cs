@@ -20,7 +20,7 @@ namespace Deploynator
 
             _eventBus.SelectedDeloyment += (_, args) =>
             {
-                Play($"{(args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name} selected for Deployment, get ready to fuck");
+                Play($"{(args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name} selected for Deployment");
             };
 
             _eventBus.DeselectedDeloyment += (_, args) =>
