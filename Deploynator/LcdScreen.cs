@@ -40,6 +40,15 @@ namespace Deploynator
                 }
             };
 
+            eventBus.DeselectedDeloyment += (_, args) =>
+            {
+                var release = args as SelectReleaseDefinitionArgs;
+                if (release != null)
+                {
+                    WriteText($"{release.Index} {release.ReleaseDefinition.Name}");
+                }
+            };
+
             eventBus.ReleaseLoaded += (_, args) =>
             {
                 var first = (args as DeployArgs)?.SelectedDeloyments.FirstOrDefault();

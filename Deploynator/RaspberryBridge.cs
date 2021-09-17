@@ -7,9 +7,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Deploynator
 {
-    public class RaspberryHandler : BackgroundService
+    public class RaspberryBridge : BackgroundService
     {
-        private readonly ILogger<RaspberryHandler> _logger;
+        private readonly ILogger<RaspberryBridge> _logger;
         private readonly EventBus _eventBus;
         private readonly GpioController _controller;
         private bool _releaseButtonDown;
@@ -18,13 +18,14 @@ namespace Deploynator
         private bool _selectButtonDown;
         private bool _deselectButtonDown;
         private const int Led1 = 10;
-        private const int ReleaseButton = 26;
-        private const int UpButton = 36;
-        private const int DownButton = 38;
-        private const int SelectButton = 40;
+        private const int ReleaseButton = 38;
+
+        private const int UpButton = 33;
+        private const int DownButton = 31;
+        private const int SelectButton = 35;
         private const int DeselectButton = 37;
 
-        public RaspberryHandler(ILogger<RaspberryHandler> logger, EventBus eventBus)
+        public RaspberryBridge(ILogger<RaspberryBridge> logger, EventBus eventBus)
         {
             _logger = logger;
             _eventBus = eventBus;
