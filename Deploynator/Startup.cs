@@ -35,7 +35,7 @@ namespace Deploynator
 
             services.AddSingleton(new DeploymentHandler(new AzureReleaseRepository(httpClient), eventBus));
 
-            services.AddHostedService<RaspberryHandler>();
+            services.AddHostedService<RaspberryBridge>();
         }
 
         private static HttpClient CreateHttpClient()
