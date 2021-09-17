@@ -30,7 +30,6 @@
 
 @inject EventBus _eventBus
 @inject DeploymentHandler _handler
-@inject LanguageSetting _setting
 
 @code {
 
@@ -61,7 +60,6 @@
 
     private void OnLanguegeChanged(ChangeEventArgs e) {
         var value = e.Value?.ToString();
-        _setting.Person = value;
-        _eventBus.OnLanguageChanged();
+        _eventBus.OnLanguageChanged(value);
     }
 }

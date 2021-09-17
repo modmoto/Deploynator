@@ -8,20 +8,19 @@ namespace Deploynator
     public class AudioStream
     {
         private readonly EventBus _eventBus;
-        private LanguageSetting _languageSetting;
         private SpeechSynthesizer _synthesizer;
+        private LanguageArgs _languageArgs;
 
-        public AudioStream(EventBus eventBus, LanguageSetting languageSetting)
+        public AudioStream(EventBus eventBus)
         {
             _eventBus = eventBus;
-            _languageSetting = languageSetting;
             _eventBus.ReleasesTriggered += (_, args) => PlayReleases(args);
             _eventBus.ServiceStarted += (_, _) => Play("Deployment ready, awaiting deployment sequence");
             _eventBus.ReleaseFailed += (_, _) => Play("Release failed, please stay calm and leave the building in an orderly fashion");
             _eventBus.ReleasesSucceeded += (_, args) => PlaySuccessfulDeployments(args as DeploymentResultsArgs);
-            _eventBus.LanguageChanged += (_, _) => CreateSynthi();
+            _eventBus.LanguageChanged += (_, args) => CreateSynthi(args as LanguageArgs);
 
-            CreateSynthi();
+            CreateSynthi(new LanguageArgs("en-US-SaraNeural"));
 
             _eventBus.SelectedDeloyment += (_, args) =>
             {
@@ -34,10 +33,11 @@ namespace Deploynator
             };
         }
 
-        private void CreateSynthi()
+        private void CreateSynthi(LanguageArgs languageArgs)
         {
             var config = SpeechConfig.FromSubscription("990a253fc3cb487e8f02867fcd3d86c2", "francecentral");
-            config.SpeechSynthesisVoiceName = _languageSetting.Person;
+            config.SpeechSynthesisVoiceName = languageArgs.NewLanguage;
+            _languageArgs = languageArgs;
             _synthesizer = new SpeechSynthesizer(config);
         }
 
@@ -74,7 +74,7 @@ namespace Deploynator
                     $"{deploymentResultsArg.ReleaseName} finished with status: {resultMessage}");
             }
 
-            if (_languageSetting.Person == "es-MX-JorgeNeural")
+            if (_languageArgs.NewLanguage == "es-MX-JorgeNeural")
             {
                 await Play("Status report finished! Happy cinco de mayo!");
 
@@ -84,10 +84,5 @@ namespace Deploynator
                 await Play("Status report finished! The cake is a lie!:");
             }
         }
-    }
-
-    public class LanguageSetting
-    {
-        public string Person { get; set; } = "en-US-SaraNeural";
     }
 }

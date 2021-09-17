@@ -27,9 +27,7 @@ namespace Deploynator
 
             var eventBus = new EventBus();
             services.AddSingleton(eventBus);
-            var languageSetting = new LanguageSetting();
-            services.AddSingleton(languageSetting);
-            var audioStream = new AudioStream(eventBus, languageSetting);
+            var audioStream = new AudioStream(eventBus);
             services.AddSingleton(audioStream);
             services.AddSingleton(new LcdScreen(eventBus));
 

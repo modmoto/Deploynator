@@ -23,10 +23,10 @@ namespace Deploynator
         public event EventHandler ReleaseLoaded;
         public event EventHandler LanguageChanged;
 
-        public virtual void OnLanguageChanged()
+        public virtual void OnLanguageChanged(string newLanguage)
         {
             var handler = LanguageChanged;
-            handler?.Invoke(this, EventArgs.Empty);
+            handler?.Invoke(this, new LanguageArgs(newLanguage));
         }
 
         public virtual void OnReleaseButtonTriggered()
@@ -117,6 +117,16 @@ namespace Deploynator
         {
             var handler = ReleaseLoaded;
             handler?.Invoke(this, new DeployArgs(releaseDefinitions));
+        }
+    }
+
+    public class LanguageArgs : EventArgs
+    {
+        public string NewLanguage { get; }
+
+        public LanguageArgs(string newLanguage)
+        {
+            NewLanguage = newLanguage;
         }
     }
 
