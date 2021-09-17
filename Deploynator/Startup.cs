@@ -23,7 +23,7 @@ namespace Deploynator
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            Thread.Sleep(10000);
+            Thread.Sleep(20000);
 
             var eventBus = new EventBus();
             services.AddSingleton(eventBus);
@@ -35,7 +35,7 @@ namespace Deploynator
 
             services.AddSingleton(new DeploymentHandler(new AzureReleaseRepository(httpClient), eventBus, audioStream));
 
-            // services.AddHostedService<RaspberryBridge>();
+            services.AddHostedService<RaspberryBridge>();
         }
 
         private static HttpClient CreateHttpClient()
