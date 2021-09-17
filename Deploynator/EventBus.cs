@@ -13,7 +13,7 @@ namespace Deploynator
         public event EventHandler DeselectButtonTriggered;
         public event EventHandler ReleaseButtonReleased;
         public event EventHandler ServiceStarted;
-        public event EventHandler ReleaseSucceeded;
+        public event EventHandler ReleasesSucceeded;
         public event EventHandler ReleaseFailed;
         public event EventHandler PreselectedDeloyment;
         public event EventHandler SelectedDeloyment;
@@ -64,10 +64,10 @@ namespace Deploynator
             handler?.Invoke(this, EventArgs.Empty);
         }
 
-        public virtual void OnReleaseSucceeded()
+        public virtual void OnReleasesSucceeded(IEnumerable<DeploymentResult> deploymentResults)
         {
-            var handler = ReleaseSucceeded;
-            handler?.Invoke(this, EventArgs.Empty);
+            var handler = ReleasesSucceeded;
+            handler?.Invoke(this, new DeploymentResultsArgs(deploymentResults));
         }
 
         public virtual void OnReleaseFailed()
@@ -134,6 +134,16 @@ namespace Deploynator
             ReleaseDefinition = releaseDefinition;
             Index = index;
             IsSelected = isSelected;
+        }
+    }
+
+    public class DeploymentResultsArgs : EventArgs
+    {
+        public IEnumerable<DeploymentResult> DeploymentResults { get; }
+
+        public DeploymentResultsArgs(IEnumerable<DeploymentResult> deploymentResults)
+        {
+            DeploymentResults = deploymentResults;
         }
     }
 }

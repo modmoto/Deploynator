@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -23,28 +24,74 @@ namespace DevLab.AzureAdapter
             _jsonOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         }
 
-        public async Task<DeploymentResult> DeployToProdAsync(int releaseDefinitionId)
+
+
+        public IEnumerable<DeploymentResult> DeployReleasesToProdAsync(IEnumerable<ReleaseDefinition> releaseDefinitions)
         {
-            var allReleases = await GetAllReleasesForDefintionIdAsync(releaseDefinitionId);
+            var tasks = releaseDefinitions.Select(DeployReleaseToProdWithStatusResult).ToArray();
+            Task.WaitAll(tasks);
+
+            return tasks.Select(x => x.Result).ToList();
+        }
+
+        public async Task<DeploymentResult> DeployReleaseToProdWithStatusResult(ReleaseDefinition releaseDefinition)
+        {
+            var releaseResult = await DeployReleaseToProdAsync(releaseDefinition);
+
+            if (!releaseResult.Deployed) 
+                return DeploymentResult.Failed(releaseDefinition.Id, releaseDefinition.Name);
+
+            while (true)
+            {
+                var releaseStatusResponse = await _httpClient.GetAsync($"release/releases/{releaseResult.ReleaseId}?api-version=6.0");
+                if (!releaseStatusResponse.IsSuccessStatusCode)
+                {
+                    return DeploymentResult.Failed(releaseDefinition.Id, releaseDefinition.Name);
+                }
+
+                var releaseStatusResponseContent = await releaseStatusResponse.Content.ReadAsStringAsync();
+                var releaseStatus = JsonSerializer.Deserialize<ReleaseInformation>(releaseStatusResponseContent, _jsonOptions);
+
+                if (releaseStatus.Environments.Last().Status.Equals(AzureConstants.ENVIRONMENT_STATUS_REJECTED,
+                        StringComparison.InvariantCultureIgnoreCase)
+                    || releaseStatus.Environments.Last().Status.Equals(AzureConstants.ENVIRONMENT_STATUS_CANCELED,
+                        StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return DeploymentResult.Failed(releaseDefinition.Id, releaseDefinition.Name);
+                }
+
+                if (releaseStatus.Environments.Last().Status.Equals(AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED,
+                    StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return DeploymentResult.Success(releaseDefinition.Id, releaseDefinition.Name, releaseStatus.Id);
+                }
+
+                await Task.Delay(3000);
+            }
+        }
+
+        private async Task<DeploymentResult> DeployReleaseToProdAsync(ReleaseDefinition releaseDefinition)
+        {
+            var allReleases = await GetAllReleasesForDefintionIdAsync(releaseDefinition.Id);
             if (allReleases == null || allReleases.Value == null || !allReleases.Value.Any())
-                return DeploymentResult.Failed;
+                return DeploymentResult.Failed(releaseDefinition.Id, releaseDefinition.Name);
 
             var prodRelease = IdentifyPotentialProdRelease(allReleases);
             if (prodRelease == null)
-                return DeploymentResult.Failed;
+                return DeploymentResult.Failed(releaseDefinition.Id, releaseDefinition.Name);
 
             if (prodRelease.Environments.Last().Status.Equals(AzureConstants.ENVIRONMENT_STATUS_NOT_STARTED, StringComparison.InvariantCultureIgnoreCase))
             {
                 if (!await DeployStageAsync(prodRelease))
-                    return DeploymentResult.Failed;
+                    return DeploymentResult.Failed(releaseDefinition.Id, releaseDefinition.Name);
 
                 await Task.Delay(2500);
             }
 
             if (!await ApproveReleaseAsync(prodRelease.Id))
-                return DeploymentResult.Failed;
+                return DeploymentResult.Failed(releaseDefinition.Id, releaseDefinition.Name);
 
-            return DeploymentResult.Success(prodRelease.Id);
+            return DeploymentResult.Success(releaseDefinition.Id, releaseDefinition.Name, prodRelease.Id);
         }
 
         private async Task<bool> DeployStageAsync(ReleaseInformation releaseInformation)

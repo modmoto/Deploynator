@@ -19,7 +19,7 @@ namespace Deploynator
             _azureReleaseRepository = azureReleaseRepository;
             _eventBus = eventBus;
 
-            _eventBus.ReleaseCountdownFinished += (_, args) => TriggerReleasesAsync((DeployArgs) args);
+            _eventBus.ReleaseCountdownFinished += (_, args) => TriggerReleasesAsync((DeployArgs)args);
             _eventBus.ReleaseButtonTriggered += (_, _) => _eventBus.OnReleasesTriggered(SelectedReleaseDefinitions);
 
             _eventBus.UpButtonTriggered += (_, _) => MoveU();
@@ -28,7 +28,7 @@ namespace Deploynator
             _eventBus.DeselectButtonTriggered += (_, _) => Deselect();
 
             _eventBus.ServiceStarted += (_, _) => LoadReleases();
-            _eventBus.ReleaseSucceeded += (_, _) => SelectedReleaseDefinitions = new List<ReleaseDefinition>();
+            _eventBus.ReleasesSucceeded += (_, _) => SelectedReleaseDefinitions = new List<ReleaseDefinition>();
         }
 
         public async Task LoadReleases()
@@ -40,18 +40,9 @@ namespace Deploynator
 
         private async Task TriggerReleasesAsync(DeployArgs deployArgs)
         {
-            var tasks = deployArgs.SelectedDeloyments.Select(t =>  _azureReleaseRepository.DeployToProdAsync(t.Id));
+            var results = _azureReleaseRepository.DeployReleasesToProdAsync(deployArgs.SelectedDeloyments);
 
-            var results = await Task.WhenAll(tasks);
-
-            if (results.All(r => r.Deployed))
-            {
-                _eventBus.OnReleaseSucceeded();
-            }
-            else
-            {
-                _eventBus.OnReleaseFailed();
-            }
+            _eventBus.OnReleasesSucceeded(results);
         }
 
         public string CurrentSelection => ReleaseDefinitions.Count > _index ? ReleaseDefinitions[_index].Name : "No deployment available";

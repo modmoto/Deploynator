@@ -37,13 +37,13 @@ namespace DevLabs.AzureAdapter.Tests
                 .When(HttpMethod.Get, $"{_baseUri.AbsoluteUri}release/releases?definitionId=1&$expand=environments&api-version=6.0")
                 .Respond("application/json", "{}");
 
-            var actual = _sut.DeployToProdAsync(1);
+            var actual = _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
 
-            actual.Result.Deployed.Should().BeFalse();
+            actual.First().Deployed.Should().BeFalse();
         }
 
         [Fact]
-        public async Task DeployToProd_NoPotentialProdReleasesFound_NothingDeployed()
+        public void DeployToProd_NoPotentialProdReleasesFound_NothingDeployed()
         {
             var releaseList = new ReleaseInformationList
             {
@@ -67,13 +67,13 @@ namespace DevLabs.AzureAdapter.Tests
                 .When(HttpMethod.Get, $"{_baseUri.AbsoluteUri}release/releases?definitionId=1&$expand=environments&api-version=6.0")
                 .Respond("application/json", JsonSerializer.Serialize(releaseList));
 
-            var actual = await _sut.DeployToProdAsync(1);
+            var actual = _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
 
-            actual.Deployed.Should().BeFalse();
+            actual.First().Deployed.Should().BeFalse();
         }
 
         [Fact]
-        public async Task DeployToProd_DeployToStageFailed_FailedResult()
+        public void DeployToProd_DeployToStageFailed_FailedResult()
         {
             var releaseList = new ReleaseInformationList
             {
@@ -104,13 +104,13 @@ namespace DevLabs.AzureAdapter.Tests
                 .When(HttpMethod.Get, $"{_baseUri.AbsoluteUri}release/releases?definitionId=1&$expand=environments&api-version=6.0")
                 .Respond("application/json", JsonSerializer.Serialize(releaseList));
 
-            var actual = await _sut.DeployToProdAsync(1);
+            var actual = _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
 
-            actual.Deployed.Should().BeFalse();
+            actual.First().Deployed.Should().BeFalse();
         }
 
         [Fact]
-        public async Task DeployToProd_GettingApprovalsFailed_FailedResult()
+        public void DeployToProd_GettingApprovalsFailed_FailedResult()
         {
             var releaseList = new ReleaseInformationList
             {
@@ -145,13 +145,13 @@ namespace DevLabs.AzureAdapter.Tests
                 .When(HttpMethod.Patch, $"{_baseUri.AbsoluteUri}release/releases/1/environments/1?api-version=6.0-preview.6")
                 .Respond("application/json", "{}");
 
-            var actual = await _sut.DeployToProdAsync(1);
+            var actual = _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
 
-            actual.Deployed.Should().BeFalse();
+            actual.First().Deployed.Should().BeFalse();
         }
 
         [Fact]
-        public async Task DeployToProd_SetApprovalFails_FailedResult()
+        public void DeployToProd_SetApprovalFails_FailedResult()
         {
             var releaseList = new ReleaseInformationList
             {
@@ -199,14 +199,13 @@ namespace DevLabs.AzureAdapter.Tests
                 .When(HttpMethod.Get, $"{_baseUri.AbsoluteUri}release/approvals?releaseIdsFilter=1&api-version=6.0")
                 .Respond("application/json", JsonSerializer.Serialize(approvelList));
 
+            var actual = _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
 
-            var actual = await _sut.DeployToProdAsync(1);
-
-            actual.Deployed.Should().BeFalse();
+            actual.First().Deployed.Should().BeFalse();
         }
 
         [Fact]
-        public async Task DeployToProd_HappyPath()
+        public void DeployToProd_HappyPath()
         {
             var releaseList = new ReleaseInformationList
             {
@@ -239,6 +238,26 @@ namespace DevLabs.AzureAdapter.Tests
                 Value = new[]
                 {
                     new Approval{Id = 123}
+                }
+            };
+
+            var succededReleaseInfo = new ReleaseInformation
+            {
+                Id = 1,
+                Environments = new List<Environment>
+                {
+                    new()
+                    {
+                        Id = 0,
+                        Name = "INT",
+                        Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED
+                    },
+                    new()
+                    {
+                        Id = 1,
+                        Name = "PROD",
+                        Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED,
+                    },
                 }
             };
 
@@ -258,10 +277,14 @@ namespace DevLabs.AzureAdapter.Tests
                 .When(HttpMethod.Patch, $"{_baseUri.AbsoluteUri}release/approvals/123?api-version=6.0")
                 .Respond("application/json", "{}");
 
-            var actual = await _sut.DeployToProdAsync(1);
+            _mockHttp
+                .When(HttpMethod.Get, $"{_baseUri.AbsoluteUri}release/releases/1?api-version=6.0")
+                .Respond("application/json", JsonSerializer.Serialize(succededReleaseInfo));
 
-            actual.Deployed.Should().BeTrue();
-            actual.ReleaseId.Should().Be(1);
+            var actual = _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
+
+            actual.First().Deployed.Should().BeTrue();
+            actual.First().ReleaseId.Should().Be(1);
         }
 
         [Fact]
