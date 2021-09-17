@@ -18,6 +18,8 @@ namespace Deploynator
         public List<ReleaseDefinition> SelectedReleaseDefinitions = new();
         private int _index;
 
+        private readonly string[] LAUGH_VARIATIONS = new[] {"HA HA HA", "HI HI HI", "HO HO HO", "VERY FUNNY", "ROFL", "LOL", "I don't get it!"};
+
         public DeploymentHandler(IAzureReleaseRepository azureReleaseRepository, EventBus eventBus, AudioStream audioStream)
         {
             _azureReleaseRepository = azureReleaseRepository;
@@ -59,7 +61,6 @@ namespace Deploynator
 
         private void StartWaitingSequence(CancellationToken cancellationToken)
         {
-
             try
             {
                 _audioStream.Play("To ease your pain of waiting, let me tell you some excellent jokes:").GetAwaiter().GetResult();
@@ -71,7 +72,10 @@ namespace Deploynator
                     {
                         var waitingText = await _randomFactsApiAdapter.GetRandomFactAsync();
                         await Task.Delay(2000);
-                        await _audioStream.Play($"{waitingText}. HA HA HA. Very funny!");
+
+                        var randoMizer = new Random();
+                        var randomJokeIndex = randoMizer.Next(0, 7);
+                        await _audioStream.Play($"{waitingText}. {LAUGH_VARIATIONS[randomJokeIndex]}");
                         cancellationToken.ThrowIfCancellationRequested();
                     }
 
