@@ -118,7 +118,23 @@ namespace DevLab.AzureAdapter
             var result = await _httpClient.GetAsync(requestUri);
             result.EnsureSuccessStatusCode();
             var jsonContent = await result.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<ReleaseDefinitionList>(jsonContent, _jsonOptions).Value;
+            var releaseDefinitions = JsonSerializer.Deserialize<ReleaseDefinitionList>(jsonContent, _jsonOptions).Value;
+
+            var validReleases = new List<ReleaseDefinition>();
+            foreach (var releaseDefinition in releaseDefinitions)
+            {
+                var allReleases = await GetAllReleasesForDefintionIdAsync(releaseDefinition.Id);
+                if (allReleases == null || allReleases.Value == null || !allReleases.Value.Any())
+                    continue;
+
+                var prodRelease = IdentifyPotentialProdRelease(allReleases);
+                if (prodRelease == null)
+                    continue;
+
+                validReleases.Add(releaseDefinition);
+            }
+
+            return validReleases;
         }
     }
 }

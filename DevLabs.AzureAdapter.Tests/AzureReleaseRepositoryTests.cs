@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -48,10 +49,12 @@ namespace DevLabs.AzureAdapter.Tests
             {
                 Count = 1,
                 Value = new List<ReleaseInformation> {
-                    new ReleaseInformation {
+                    new()
+                    {
                         Id = 1,
                         Environments = new List<Environment> {
-                            new Environment {
+                            new()
+                            {
                                 Id = 0,
                                 Name = "INT",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED
@@ -76,15 +79,18 @@ namespace DevLabs.AzureAdapter.Tests
             {
                 Count = 1,
                 Value = new List<ReleaseInformation> {
-                    new ReleaseInformation {
+                    new()
+                    {
                         Id = 1,
                         Environments = new List<Environment> {
-                            new Environment {
+                            new()
+                            {
                                 Id = 0,
                                 Name = "INT",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED
                             },
-                            new Environment {
+                            new()
+                            {
                                 Id = 1,
                                 Name = "PROD",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_NOT_STARTED,
@@ -110,15 +116,18 @@ namespace DevLabs.AzureAdapter.Tests
             {
                 Count = 1,
                 Value = new List<ReleaseInformation> {
-                    new ReleaseInformation {
+                    new()
+                    {
                         Id = 1,
                         Environments = new List<Environment> {
-                            new Environment {
+                            new()
+                            {
                                 Id = 0,
                                 Name = "INT",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED
                             },
-                            new Environment {
+                            new()
+                            {
                                 Id = 1,
                                 Name = "PROD",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_NOT_STARTED,
@@ -148,15 +157,18 @@ namespace DevLabs.AzureAdapter.Tests
             {
                 Count = 1,
                 Value = new List<ReleaseInformation> {
-                    new ReleaseInformation {
+                    new()
+                    {
                         Id = 1,
                         Environments = new List<Environment> {
-                            new Environment {
+                            new()
+                            {
                                 Id = 0,
                                 Name = "INT",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED
                             },
-                            new Environment {
+                            new()
+                            {
                                 Id = 1,
                                 Name = "PROD",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_NOT_STARTED,
@@ -200,15 +212,18 @@ namespace DevLabs.AzureAdapter.Tests
             {
                 Count = 1,
                 Value = new List<ReleaseInformation> {
-                    new ReleaseInformation {
+                    new()
+                    {
                         Id = 1,
                         Environments = new List<Environment> {
-                            new Environment {
+                            new()
+                            {
                                 Id = 0,
                                 Name = "INT",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED
                             },
-                            new Environment {
+                            new()
+                            {
                                 Id = 1,
                                 Name = "PROD",
                                 Status = AzureConstants.ENVIRONMENT_STATUS_NOT_STARTED,
@@ -252,6 +267,74 @@ namespace DevLabs.AzureAdapter.Tests
         [Fact]
         public async Task GetReleaseDefinitionsAsync_HappyPath()
         {
+            var releaseList1 = new ReleaseInformationList
+            {
+                Count = 2,
+                Value = new List<ReleaseInformation> {
+                    new()
+                    {
+                        Id = 1,
+                        Environments = new List<Environment> {
+                            new()
+                            {
+                                Id = 0,
+                                Name = "INT",
+                                Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED
+                            },
+                            new()
+                            {
+                                Id = 1,
+                                Name = "PROD",
+                                Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED,
+                            },
+                        }
+                    }
+                }
+            };
+
+            var releaseList2 = new ReleaseInformationList
+            {
+                Count = 2,
+                Value = new List<ReleaseInformation> {
+                    new()
+                    {
+                        Id = 3,
+                        Environments = new List<Environment> {
+                            new()
+                            {
+                                Id = 0,
+                                Name = "INT",
+                                Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED
+                            },
+                            new()
+                            {
+                                Id = 1,
+                                Name = "PROD",
+                                Status = AzureConstants.ENVIRONMENT_STATUS_REJECTED,
+                            },
+                        }
+                    },
+                    new()
+                    {
+                        Id = 4,
+                        Environments = new List<Environment> {
+                            new()
+                            {
+                                Id = 0,
+                                Name = "INT",
+                                Status = AzureConstants.ENVIRONMENT_STATUS_SUCCEEDED
+                            },
+                            new()
+                            {
+                                Id = 1,
+                                Name = "PROD",
+                                Status = AzureConstants.ENVIRONMENT_STATUS_NOT_STARTED,
+                            },
+                        }
+                    }
+                }
+            };
+
             var expected = new []{new ReleaseDefinition{Id = 1, Name="R1"}, new ReleaseDefinition{Id = 1123, Name="R2"}};
             var releaseDefinitionList = new ReleaseDefinitionList{Count = expected.Length, Value = expected};
 
@@ -259,9 +342,17 @@ namespace DevLabs.AzureAdapter.Tests
                 .When(HttpMethod.Get, $"{_baseUri.AbsoluteUri}release/definitions?api-version=6.0")
                 .Respond("application/json", JsonSerializer.Serialize(releaseDefinitionList));
 
+            _mockHttp
+                .When(HttpMethod.Get, $"{_baseUri.AbsoluteUri}release/releases?definitionId={1}&$expand=environments&api-version=6.0")
+                .Respond("application/json", JsonSerializer.Serialize(releaseList1));
+
+            _mockHttp
+                .When(HttpMethod.Get, $"{_baseUri.AbsoluteUri}release/releases?definitionId={1123}&$expand=environments&api-version=6.0")
+                .Respond("application/json", JsonSerializer.Serialize(releaseList2));
+
             var actual = await _sut.GetReleaseDefinitionsAsync();
 
-            actual.Should().BeEquivalentTo(expected);
+            actual.Single().Id.Should().Be(1123);
         }
     }
 }
