@@ -54,7 +54,7 @@ namespace Deploynator
             }
         }
 
-        public string CurrentSelection => ReleaseDefinitions[_index].Name;
+        public string CurrentSelection => ReleaseDefinitions.Count > _index ? ReleaseDefinitions[_index].Name : "No deployment available";
 
         public void Select()
         {
