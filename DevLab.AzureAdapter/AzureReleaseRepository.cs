@@ -22,6 +22,7 @@ namespace DevLab.AzureAdapter
             _jsonOptions.PropertyNamingPolicy = null;
             _jsonOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         }
+
         public async Task<DeploymentResult> DeployToProdAsync(int releaseDefinitionId)
         {
             var allReleases = await GetAllReleasesForDefintionIdAsync(releaseDefinitionId);

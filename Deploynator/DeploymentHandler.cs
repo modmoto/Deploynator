@@ -62,12 +62,12 @@ namespace Deploynator
 
             SelectedReleaseDefinitions.Add(ReleaseDefinitions[_index]);
             SelectedReleaseDefinitions = SelectedReleaseDefinitions.Distinct().ToList();
-            _eventBus.OnSelectedDeloyment(ReleaseDefinitions[_index], _index);
+            _eventBus.OnSelectedDeloyment(ReleaseDefinitions[_index], _index + 1);
         }
 
         public void MoveDown()
         {
-            if (_index <= 0) return;
+            if (_index <= 0) _index = ReleaseDefinitions.Count;
             _index--;
             _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index], _index + 1, IsSelected());
         }
@@ -79,7 +79,7 @@ namespace Deploynator
 
         public void MoveU()
         {
-            if (_index >= ReleaseDefinitions.Count - 1) return;
+            if (_index >= ReleaseDefinitions.Count - 1) _index = -1;
             _index++;
             _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index], _index + 1, IsSelected());
         }
