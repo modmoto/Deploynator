@@ -34,7 +34,7 @@
 
 @code {
 
-    private List<string> languages = new List<string>
+    private List<string> languages = new()
     {
         "en-US-SaraNeural",
         "es-MX-JorgeNeural",
@@ -60,7 +60,8 @@
     }
 
     private void OnLanguegeChanged(ChangeEventArgs e) {
-        var value = e.Value.ToString();
+        var value = e.Value?.ToString();
         _setting.Person = value;
+        _eventBus.OnLanguageChanged();
     }
 }

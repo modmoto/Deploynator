@@ -9,6 +9,7 @@ namespace Deploynator
     {
         private readonly EventBus _eventBus;
         private LanguageSetting _languageSetting;
+        private SpeechSynthesizer _synthesizer;
 
         public AudioStream(EventBus eventBus, LanguageSetting languageSetting)
         {
@@ -18,6 +19,9 @@ namespace Deploynator
             _eventBus.ServiceStarted += (_, _) => Play("Deployment ready, awaiting deployment sequence");
             _eventBus.ReleaseFailed += (_, _) => Play("Release failed, please stay calm and leave the building in an orderly fashion");
             _eventBus.ReleasesSucceeded += (_, args) => PlaySuccessfulDeployments(args as DeploymentResultsArgs);
+            _eventBus.LanguageChanged += (_, _) => CreateSynthi();
+
+            CreateSynthi();
 
             _eventBus.SelectedDeloyment += (_, args) =>
             {
@@ -28,6 +32,13 @@ namespace Deploynator
             {
                 Play($"{(args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name} removed from Deployment, bitch please");
             };
+        }
+
+        private void CreateSynthi()
+        {
+            var config = SpeechConfig.FromSubscription("990a253fc3cb487e8f02867fcd3d86c2", "francecentral");
+            config.SpeechSynthesisVoiceName = _languageSetting.Person;
+            _synthesizer = new SpeechSynthesizer(config);
         }
 
         private async Task PlayReleases(EventArgs args)
@@ -47,10 +58,7 @@ namespace Deploynator
 
         public async Task Play(string message)
         {
-            var config = SpeechConfig.FromSubscription("990a253fc3cb487e8f02867fcd3d86c2", "francecentral");
-            config.SpeechSynthesisVoiceName = _languageSetting.Person;
-            var synthesizer = new SpeechSynthesizer(config);
-            await synthesizer.SpeakTextAsync(message);
+            await _synthesizer.SpeakTextAsync(message);
         }
 
         private async Task PlaySuccessfulDeployments(DeploymentResultsArgs deploymentResultsArgs)

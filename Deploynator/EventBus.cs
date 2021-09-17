@@ -21,6 +21,13 @@ namespace Deploynator
         public event EventHandler ReleaseCountdownFinished;
         public event EventHandler DeselectedDeloyment;
         public event EventHandler ReleaseLoaded;
+        public event EventHandler LanguageChanged;
+
+        public virtual void OnLanguageChanged()
+        {
+            var handler = LanguageChanged;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
 
         public virtual void OnReleaseButtonTriggered()
         {
