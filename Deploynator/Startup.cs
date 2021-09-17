@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using DevLab.AzureAdapter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,6 +24,7 @@ namespace Deploynator
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            Thread.Sleep(20000);
 
             var eventBus = new EventBus();
             services.AddSingleton(eventBus);
