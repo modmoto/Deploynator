@@ -42,7 +42,7 @@ namespace Deploynator
 
             eventBus.ReleaseLoaded += (_, args) =>
             {
-                WriteText((args as DeployArgs)?.SelectedDeloyments.First().Name);
+                WriteText("1" + (args as DeployArgs)?.SelectedDeloyments.First().Name);
             };
 
             eventBus.ReleaseSucceeded += (_, args) =>
