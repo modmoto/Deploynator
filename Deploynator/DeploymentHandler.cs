@@ -27,7 +27,7 @@ namespace Deploynator
             _randomFactsApiAdapter = new RandomFactsApiAdapter();
 
             _eventBus.ReleaseCountdownFinished += TriggerReleasesAsync;
-            _eventBus.ReleaseButtonTriggered += (_, _) => _eventBus.OnReleasesTriggered(SelectedReleaseDefinitions);
+            _eventBus.ReleaseButtonTriggered += StarteCountdownSequence;
 
             _eventBus.UpButtonTriggered += (_, _) => MoveU();
             _eventBus.DownButtonTriggered += (_, _) => MoveDown();
@@ -37,6 +37,18 @@ namespace Deploynator
             _eventBus.ServiceStarted += LoadReleases;
             _eventBus.ReleasesSucceeded += LoadReleases;
             _eventBus.JokeFinished += (_, _) => _isTellingJoke = false;
+        }
+
+        private void StarteCountdownSequence(object sender, EventArgs e)
+        {
+            if (SelectedReleaseDefinitions.Count == 0)
+            {
+                _eventBus.OnErrorNoReleasesSelected();
+            }
+            else
+            {
+                _eventBus.OnReleasesTriggered(SelectedReleaseDefinitions);
+            }
         }
 
         public async void LoadReleases(object sender, EventArgs eventArgs)

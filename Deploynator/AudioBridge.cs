@@ -26,6 +26,12 @@ namespace Deploynator
             _eventBus.DeselectedDeloyment += PlayDeselectedDeloyment;
             _eventBus.WaitingSequenceStarted += PlayWaitingSequenceStarted;
             _eventBus.FoundJoke += PlayFoundJoke;
+            _eventBus.ErrorNoReleasesSelected += PlayErrorNoReleasesSelected;
+        }
+
+        private async void PlayErrorNoReleasesSelected(object sender, EventArgs e)
+        {
+            await Play("No deployments selected, please select at least one deployment first");
         }
 
         private async void PlayFoundJoke(object sender, EventArgs e)

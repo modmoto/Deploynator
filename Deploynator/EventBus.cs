@@ -24,6 +24,7 @@ namespace Deploynator
         public event EventHandler WaitingSequenceStarted;
         public event EventHandler FoundJoke;
         public event EventHandler JokeFinished;
+        public event EventHandler ErrorNoReleasesSelected;
 
         public virtual void OnLanguageChanged(string newLanguage)
         {
@@ -130,6 +131,12 @@ namespace Deploynator
         public void OnJokeFinished()
         {
             var handler = JokeFinished;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnErrorNoReleasesSelected()
+        {
+            var handler = ErrorNoReleasesSelected;
             handler?.Invoke(this, EventArgs.Empty);
         }
     }
