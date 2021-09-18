@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -14,21 +16,35 @@ namespace DevLab.AzureAdapter
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        public AzureReleaseRepository(HttpClient httpClient)
+        public AzureReleaseRepository(HttpClient httpClient = null)
         {
-            _httpClient = httpClient;
+            if (httpClient == null)
+            {
+                var handler = new HttpClientHandler();
+                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => { return true; };
+
+                _httpClient = new HttpClient(handler);
+                _httpClient.BaseAddress = new Uri("https://atdevops.azure.intern/NgCollection/Devlab/_apis/");
+                var encodedAuth = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("AZURE_TOKEN") ?? "lel");
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(encodedAuth));
+            }
+            else
+            {
+                _httpClient = httpClient;
+            }
+
             _jsonOptions = new JsonSerializerOptions();
             _jsonOptions.PropertyNameCaseInsensitive = true;
             _jsonOptions.PropertyNamingPolicy = null;
             _jsonOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         }
 
-
-
-        public IEnumerable<DeploymentResult> DeployReleasesToProdAsync(IEnumerable<ReleaseDefinition> releaseDefinitions)
+        public async Task<IEnumerable<DeploymentResult>> DeployReleasesToProdAsync(
+            IEnumerable<ReleaseDefinition> releaseDefinitions)
         {
             var tasks = releaseDefinitions.Select(DeployReleaseToProdWithStatusResult).ToArray();
-            Task.WaitAll(tasks);
+            await Task.WhenAll(tasks);
 
             return tasks.Select(x => x.Result).ToList();
         }
@@ -158,14 +174,12 @@ namespace DevLab.AzureAdapter
             return null;
         }
 
-        public async Task<IEnumerable<ReleaseDefinition>> GetReleaseDefinitionsAsync()
+        public async Task<List<ReleaseDefinition>> GetReleaseDefinitionsAsync()
         {
             var requestUri = $"release/definitions?api-version=6.0";
             var result = await _httpClient.GetAsync(requestUri);
-            Console.WriteLine(result.StatusCode);
             result.EnsureSuccessStatusCode();
             var jsonContent = await result.Content.ReadAsStringAsync();
-            Console.WriteLine(jsonContent);
             var releaseDefinitions = JsonSerializer.Deserialize<ReleaseDefinitionList>(jsonContent, _jsonOptions).Value;
 
             var validReleases = new List<ReleaseDefinition>();

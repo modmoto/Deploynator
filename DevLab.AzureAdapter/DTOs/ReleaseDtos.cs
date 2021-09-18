@@ -12,10 +12,10 @@ namespace DevLab.AzureAdapter.DTOs
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public IEnumerable<Environment> Environments { get; set; }
+        public IEnumerable<Stage> Environments { get; set; }
     }
 
-    public class Environment
+    public class Stage
     {
         public int Id { get; set; }
         public string Name { get; set; }

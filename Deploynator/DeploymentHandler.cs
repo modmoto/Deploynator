@@ -10,81 +10,85 @@ namespace Deploynator
 {
     public class DeploymentHandler
     {
-        private readonly IAzureReleaseRepository _azureReleaseRepository;
         private readonly EventBus _eventBus;
-        private readonly AudioStream _audioStream;
+        private readonly IAzureReleaseRepository _azureReleaseRepository;
         private readonly RandomFactsApiAdapter _randomFactsApiAdapter;
         public List<ReleaseDefinition> ReleaseDefinitions = new();
         public List<ReleaseDefinition> SelectedReleaseDefinitions = new();
         private int _index;
+        private bool _isTellingJoke;
 
-        private readonly string[] LAUGH_VARIATIONS = new[] {"HA HA HA", "HI HI HI", "HO HO HO", "VERY FUNNY", "ROFL", "LOL", "I don't get it!"};
+        private readonly string[] LAUGH_VARIATIONS = {"HA HA HA", "HI HI HI", "HO HO HO", "VERY FUNNY", "ROFL", "LOL", "I don't get it!"};
 
-        public DeploymentHandler(IAzureReleaseRepository azureReleaseRepository, EventBus eventBus, AudioStream audioStream)
+        public DeploymentHandler(IAzureReleaseRepository azureReleaseRepository, EventBus eventBus)
         {
             _azureReleaseRepository = azureReleaseRepository;
             _eventBus = eventBus;
-            _audioStream = audioStream;
             _randomFactsApiAdapter = new RandomFactsApiAdapter();
 
-            _eventBus.ReleaseCountdownFinished += (_, args) => TriggerReleasesAsync((DeployArgs)args);
-            _eventBus.ReleaseButtonTriggered += (_, _) => _eventBus.OnReleasesTriggered(SelectedReleaseDefinitions);
+            _eventBus.ReleaseCountdownFinished += TriggerReleasesAsync;
+            _eventBus.ReleaseButtonTriggered += StarteCountdownSequence;
 
             _eventBus.UpButtonTriggered += (_, _) => MoveU();
             _eventBus.DownButtonTriggered += (_, _) => MoveDown();
             _eventBus.SelectButtonTriggered += (_, _) => Select();
             _eventBus.DeselectButtonTriggered += (_, _) => Deselect();
 
-            _eventBus.ServiceStarted += (_, _) => LoadReleases();
-            _eventBus.ReleasesSucceeded += (_, _) => LoadReleases();
+            _eventBus.ServiceStarted += LoadReleases;
+            _eventBus.ReleasesSucceeded += LoadReleases;
+            _eventBus.JokeFinished += (_, _) => _isTellingJoke = false;
         }
 
-        public async Task LoadReleases()
+        private void StarteCountdownSequence(object sender, EventArgs e)
         {
-            Console.WriteLine("Load releases called");
-            var releaseDefinitions = await _azureReleaseRepository.GetReleaseDefinitionsAsync();
-            ReleaseDefinitions = releaseDefinitions.ToList();
+            if (SelectedReleaseDefinitions.Count == 0)
+            {
+                _eventBus.OnErrorNoReleasesSelected();
+            }
+            else
+            {
+                _eventBus.OnReleasesTriggered(SelectedReleaseDefinitions);
+            }
+        }
+
+        public async void LoadReleases(object sender, EventArgs eventArgs)
+        {
+            ReleaseDefinitions = await _azureReleaseRepository.GetReleaseDefinitionsAsync() ?? new List<ReleaseDefinition>();
             SelectedReleaseDefinitions = new List<ReleaseDefinition>();
             _eventBus.OnReleaseLoaded(ReleaseDefinitions);
         }
 
-        private async Task TriggerReleasesAsync(DeployArgs deployArgs)
+        private async void TriggerReleasesAsync(object sender, EventArgs deployArgs)
         {
             var cancellationTokenSource = new CancellationTokenSource();
-            StartWaitingSequence(cancellationTokenSource.Token);
+            StartWaitingSequenceInBackground(cancellationTokenSource.Token);
             
-            var results = _azureReleaseRepository.DeployReleasesToProdAsync(deployArgs.SelectedDeloyments);
+            var results = await _azureReleaseRepository.DeployReleasesToProdAsync(((DeployArgs) deployArgs).SelectedDeloyments);
 
             cancellationTokenSource.Cancel();
             _eventBus.OnReleasesSucceeded(results);
         }
 
-        private void StartWaitingSequence(CancellationToken cancellationToken)
+        private void StartWaitingSequenceInBackground(CancellationToken cancellationToken)
         {
-            try
-            {
-                _audioStream.Play("To ease your pain of waiting, let me tell you some excellent jokes:").GetAwaiter().GetResult();
-                Task.Delay(500);
+            _eventBus.OnWaitingSequenceStarted();
 
-                Task.Run(async () =>
+            Task.Run(async () =>
+            {
+                while (!cancellationToken.IsCancellationRequested)
                 {
-                    while (true)
+                    if (!_isTellingJoke)
                     {
                         var waitingText = await _randomFactsApiAdapter.GetRandomFactAsync();
-                        await Task.Delay(2000);
-
                         var randoMizer = new Random();
                         var randomJokeIndex = randoMizer.Next(0, 7);
-                        await _audioStream.Play($"{waitingText}. {LAUGH_VARIATIONS[randomJokeIndex]}");
-                        cancellationToken.ThrowIfCancellationRequested();
+                        _eventBus.OnFoundJoke($"{waitingText}. {LAUGH_VARIATIONS[randomJokeIndex]}");
+                        _isTellingJoke = true;
                     }
 
-                }, cancellationToken);
-            }
-            catch
-            {
-                // ignored
-            }
+                    await Task.Delay(2000, cancellationToken);
+                }
+            }, cancellationToken);
         }
 
         public string CurrentSelection => ReleaseDefinitions.Count > _index ? ReleaseDefinitions[_index].Name : "No deployment available";

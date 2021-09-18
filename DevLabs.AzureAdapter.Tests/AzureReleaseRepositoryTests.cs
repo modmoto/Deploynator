@@ -9,41 +9,38 @@ using DevLab.AzureAdapter.DTOs;
 using FluentAssertions;
 using RichardSzalay.MockHttp;
 using Xunit;
-using Environment = DevLab.AzureAdapter.DTOs.Environment;
 
 namespace DevLabs.AzureAdapter.Tests
 {
     public class AzureReleaseRepositoryTests
     {
         private MockHttpMessageHandler _mockHttp;
-        private HttpClient _httpClient;
         private AzureReleaseRepository _sut;
         private Uri _baseUri;
 
         public AzureReleaseRepositoryTests()
         {
-
             _mockHttp = new MockHttpMessageHandler();
-            _httpClient = _mockHttp.ToHttpClient();
+            var httpClient = _mockHttp.ToHttpClient();
             _baseUri = new Uri("https://localhost:1234");
-            _httpClient.BaseAddress = _baseUri;
-            _sut = new AzureReleaseRepository(_httpClient);
+            httpClient.BaseAddress = _baseUri;
+            _sut = new AzureReleaseRepository(httpClient);
         }
 
         [Fact]
-        public void DeployToProd_UnkownReleaseDefinition_NothingDeployed()
+        public async Task DeployToProd_UnkownReleaseDefinition_NothingDeployed()
         {
             _mockHttp
                 .When(HttpMethod.Get, $"{_baseUri.AbsoluteUri}release/releases?definitionId=1&$expand=environments&api-version=6.0")
                 .Respond("application/json", "{}");
 
-            var actual = _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
+            var actual = await _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
 
             actual.First().Deployed.Should().BeFalse();
         }
 
         [Fact]
-        public void DeployToProd_NoPotentialProdReleasesFound_NothingDeployed()
+        public async Task DeployToProd_NoPotentialProdReleasesFound_NothingDeployed()
         {
             var releaseList = new ReleaseInformationList
             {
@@ -52,7 +49,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 1,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,
@@ -67,13 +64,13 @@ namespace DevLabs.AzureAdapter.Tests
                 .When(HttpMethod.Get, $"{_baseUri.AbsoluteUri}release/releases?definitionId=1&$expand=environments&api-version=6.0")
                 .Respond("application/json", JsonSerializer.Serialize(releaseList));
 
-            var actual = _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
+            var actual = await _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
 
             actual.First().Deployed.Should().BeFalse();
         }
 
         [Fact]
-        public void DeployToProd_DeployToStageFailed_FailedResult()
+        public async Task DeployToProd_DeployToStageFailed_FailedResult()
         {
             var releaseList = new ReleaseInformationList
             {
@@ -82,7 +79,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 1,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,
@@ -104,13 +101,13 @@ namespace DevLabs.AzureAdapter.Tests
                 .When(HttpMethod.Get, $"{_baseUri.AbsoluteUri}release/releases?definitionId=1&$expand=environments&api-version=6.0")
                 .Respond("application/json", JsonSerializer.Serialize(releaseList));
 
-            var actual = _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
+            var actual = await _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
 
             actual.First().Deployed.Should().BeFalse();
         }
 
         [Fact]
-        public void DeployToProd_GettingApprovalsFailed_FailedResult()
+        public async Task DeployToProd_GettingApprovalsFailed_FailedResult()
         {
             var releaseList = new ReleaseInformationList
             {
@@ -119,7 +116,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 1,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,
@@ -145,13 +142,13 @@ namespace DevLabs.AzureAdapter.Tests
                 .When(HttpMethod.Patch, $"{_baseUri.AbsoluteUri}release/releases/1/environments/1?api-version=6.0-preview.6")
                 .Respond("application/json", "{}");
 
-            var actual = _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
+            var actual = await _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
 
             actual.First().Deployed.Should().BeFalse();
         }
 
         [Fact]
-        public void DeployToProd_SetApprovalFails_FailedResult()
+        public async Task DeployToProd_SetApprovalFails_FailedResult()
         {
             var releaseList = new ReleaseInformationList
             {
@@ -160,7 +157,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 1,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,
@@ -199,13 +196,13 @@ namespace DevLabs.AzureAdapter.Tests
                 .When(HttpMethod.Get, $"{_baseUri.AbsoluteUri}release/approvals?releaseIdsFilter=1&api-version=6.0")
                 .Respond("application/json", JsonSerializer.Serialize(approvelList));
 
-            var actual = _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
+            var actual = await  _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
 
             actual.First().Deployed.Should().BeFalse();
         }
 
         [Fact]
-        public void DeployToProd_HappyPath()
+        public async Task DeployToProd_HappyPath()
         {
             var releaseList = new ReleaseInformationList
             {
@@ -214,7 +211,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 1,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,
@@ -244,7 +241,7 @@ namespace DevLabs.AzureAdapter.Tests
             var succededReleaseInfo = new ReleaseInformation
             {
                 Id = 1,
-                Environments = new List<Environment>
+                Environments = new List<Stage>
                 {
                     new()
                     {
@@ -281,7 +278,7 @@ namespace DevLabs.AzureAdapter.Tests
                 .When(HttpMethod.Get, $"{_baseUri.AbsoluteUri}release/releases/1?api-version=6.0")
                 .Respond("application/json", JsonSerializer.Serialize(succededReleaseInfo));
 
-            var actual = _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
+            var actual = await _sut.DeployReleasesToProdAsync(new List<ReleaseDefinition> {new() {Id = 1}});
 
             actual.First().Deployed.Should().BeTrue();
             actual.First().ReleaseId.Should().Be(1);
@@ -297,7 +294,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 1,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,
@@ -322,7 +319,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 3,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,
@@ -340,7 +337,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 4,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,
