@@ -10,8 +10,8 @@ namespace Deploynator
 {
     public class DeploymentHandler
     {
-        private readonly IAzureReleaseRepository _azureReleaseRepository;
         private readonly EventBus _eventBus;
+        private readonly IAzureReleaseRepository _azureReleaseRepository;
         private readonly RandomFactsApiAdapter _randomFactsApiAdapter;
         public List<ReleaseDefinition> ReleaseDefinitions = new();
         public List<ReleaseDefinition> SelectedReleaseDefinitions = new();

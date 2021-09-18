@@ -5,13 +5,13 @@ using Microsoft.CognitiveServices.Speech;
 
 namespace Deploynator
 {
-    public class AudioStream
+    public class AudioBridge
     {
         private readonly EventBus _eventBus;
         private SpeechSynthesizer _synthesizer;
         private LanguageArgs _languageArgs;
 
-        public AudioStream(EventBus eventBus)
+        public AudioBridge(EventBus eventBus)
         {
             _eventBus = eventBus;
 

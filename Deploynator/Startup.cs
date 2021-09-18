@@ -25,7 +25,7 @@ namespace Deploynator
             services.AddServerSideBlazor();
 
             services.AddSingleton<EventBus>();
-            services.AddSingleton<AudioStream>();
+            services.AddSingleton<AudioBridge>();
             services.AddSingleton<LcdScreen>();
 
             // services.AddSingleton<IAzureReleaseRepository, FakeAzureReleaseRepository>();

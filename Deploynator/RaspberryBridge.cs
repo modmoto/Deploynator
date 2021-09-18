@@ -24,10 +24,15 @@ namespace Deploynator
         private const int SelectButton = 35;
         private const int DeselectButton = 37;
 
-        public RaspberryBridge(ILogger<RaspberryBridge> logger, EventBus eventBus)
+        public RaspberryBridge(ILogger<RaspberryBridge> logger, EventBus eventBus, IServiceProvider serviceProvider)
         {
             _logger = logger;
             _eventBus = eventBus;
+
+            // Hack to get the DI to trigger
+            serviceProvider.GetService(typeof(AudioBridge));
+            serviceProvider.GetService(typeof(LcdScreen));
+            serviceProvider.GetService(typeof(DeploymentHandler));
         }
 
         private async Task InitializeRaspberryPins()
