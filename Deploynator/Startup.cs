@@ -28,6 +28,7 @@ namespace Deploynator
             services.AddSingleton<AudioStream>();
             services.AddSingleton<LcdScreen>();
 
+            // services.AddSingleton<IAzureReleaseRepository, FakeAzureReleaseRepository>();
             services.AddSingleton<IAzureReleaseRepository, AzureReleaseRepository>();
             services.AddSingleton<DeploymentHandler>();
 

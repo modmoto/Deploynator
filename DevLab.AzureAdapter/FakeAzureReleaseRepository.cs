@@ -4,7 +4,7 @@ using DevLab.AzureAdapter.DTOs;
 
 namespace DevLab.AzureAdapter
 {
-    class FakeAzureReleaseRepository : IAzureReleaseRepository
+    public class FakeAzureReleaseRepository : IAzureReleaseRepository
     {
         private List<ReleaseDefinition> _releaseDefinitions = new()
         {
