@@ -20,6 +20,7 @@
 <button @onclick="() => Do(() => _handler.Select())">select</button>
 <button @onclick="() => Do(() => _handler.Deselect())">unselect</button>
 <button @onclick="() => Do(() => _handler.LoadReleases(null, null))">Load Releases</button>
+<button @onclick="() => Do(() => _eventBus.OnReleasesTriggered(_handler.SelectedReleaseDefinitions))">DELOY</button>
 
 <select class="custom-select" @onchange="OnLanguegeChanged" title="Region is required ">  
     <option value="Select" selected disabled="disabled">(Choose person)</option>

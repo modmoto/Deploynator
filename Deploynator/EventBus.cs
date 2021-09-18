@@ -14,7 +14,6 @@ namespace Deploynator
         public event EventHandler ReleaseButtonReleased;
         public event EventHandler ServiceStarted;
         public event EventHandler ReleasesSucceeded;
-        public event EventHandler ReleaseFailed;
         public event EventHandler PreselectedDeloyment;
         public event EventHandler SelectedDeloyment;
         public event EventHandler ReleasesTriggered;
@@ -78,12 +77,6 @@ namespace Deploynator
         {
             var handler = ReleasesSucceeded;
             handler?.Invoke(this, new DeploymentResultsArgs(deploymentResults));
-        }
-
-        public virtual void OnReleaseFailed()
-        {
-            var handler = ReleaseFailed;
-            handler?.Invoke(this, EventArgs.Empty);
         }
 
         public virtual void OnPreselectedDeloyment(ReleaseDefinition releaseDefinition, int index, bool isSelected)

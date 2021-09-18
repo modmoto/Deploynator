@@ -19,7 +19,6 @@ namespace Deploynator
 
             _eventBus.ReleasesTriggered += PlayReleasesTriggered;
             _eventBus.ServiceStarted += PlayServiceStarted;
-            _eventBus.ReleaseFailed += PlayReleaseFailed;
             _eventBus.ReleasesSucceeded += PlayReleasesSucceeded;
             _eventBus.LanguageChanged += (_, args) => CreateSynthi(args as LanguageArgs);
 
@@ -54,11 +53,6 @@ namespace Deploynator
         private async void PlayReleasesSucceeded(object sender, EventArgs args)
         {
             await PlaySuccessfulDeployments(args as DeploymentResultsArgs);
-        }
-
-        private async void PlayReleaseFailed(object sender, EventArgs e)
-        {
-            await Play("Release failed, please stay calm and leave the building in an orderly fashion");
         }
 
         private async void PlayServiceStarted(object sender, EventArgs e)
@@ -102,9 +96,8 @@ namespace Deploynator
             {
                 await Task.Delay(1000);
 
-                var resultMessage = deploymentResultsArg.Deployed ? "Success!" : "Failed!";
-                await Play(
-                    $"{deploymentResultsArg.ReleaseName} finished with status: {resultMessage}");
+                var resultMessage = deploymentResultsArg.Deployed ? "Success!" : "Failed! Please stay calm and leave the buildung in an orderly fashion.";
+                await Play($"{deploymentResultsArg.ReleaseName} finished with status: {resultMessage}");
             }
 
             if (_languageArgs.NewLanguage == "es-MX-JorgeNeural")
@@ -114,7 +107,7 @@ namespace Deploynator
             }
             else
             {
-                await Play("Status report finished! The cake is a lie!:");
+                await Play("Status report finished! The cake is a lie!");
             }
         }
     }

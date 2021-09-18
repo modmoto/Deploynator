@@ -49,7 +49,7 @@ namespace Deploynator
         private async void TriggerReleasesAsync(object sender, EventArgs deployArgs)
         {
             var cancellationTokenSource = new CancellationTokenSource();
-            await StartWaitingSequence(cancellationTokenSource.Token);
+            StartWaitingSequenceInBackground(cancellationTokenSource.Token);
             
             var results = await _azureReleaseRepository.DeployReleasesToProdAsync(((DeployArgs) deployArgs).SelectedDeloyments);
 
@@ -57,11 +57,11 @@ namespace Deploynator
             _eventBus.OnReleasesSucceeded(results);
         }
 
-        private async Task StartWaitingSequence(CancellationToken cancellationToken)
+        private void StartWaitingSequenceInBackground(CancellationToken cancellationToken)
         {
             _eventBus.OnWaitingSequenceStarted();
 
-            await Task.Run(async () =>
+            Task.Run(async () =>
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
@@ -76,7 +76,6 @@ namespace Deploynator
 
                     await Task.Delay(2000, cancellationToken);
                 }
-
             }, cancellationToken);
         }
 

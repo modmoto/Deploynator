@@ -33,13 +33,16 @@ namespace DevLab.AzureAdapter
         public async Task<IEnumerable<DeploymentResult>> DeployReleasesToProdAsync(
             IEnumerable<ReleaseDefinition> releaseDefinitions)
         {
-            await Task.Delay(10000);
-            return new List<DeploymentResult>
+            await Task.Delay(20000);
+            var definitions = new List<DeploymentResult>();
+            foreach (var r in releaseDefinitions)
             {
-                DeploymentResult.Success(_releaseDefinitions[0].Id, _releaseDefinitions[0].Name, _releaseDefinitions[0].Id),
-                DeploymentResult.Failed(_releaseDefinitions[1].Id, _releaseDefinitions[1].Name),
-                DeploymentResult.Success(_releaseDefinitions[2].Id, _releaseDefinitions[2].Name, _releaseDefinitions[0].Id)
-            };
+                definitions.Add(r.Id % 2 == 0
+                    ? DeploymentResult.Failed(r.Id, r.Name)
+                    : DeploymentResult.Success(r.Id, r.Name, r.Id));
+            }
+
+            return definitions;
         }
     }
 }
