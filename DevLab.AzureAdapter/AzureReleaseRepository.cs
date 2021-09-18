@@ -36,12 +36,11 @@ namespace DevLab.AzureAdapter
             _jsonOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         }
 
-
-
-        public IEnumerable<DeploymentResult> DeployReleasesToProdAsync(IEnumerable<ReleaseDefinition> releaseDefinitions)
+        public async Task<IEnumerable<DeploymentResult>> DeployReleasesToProdAsync(
+            IEnumerable<ReleaseDefinition> releaseDefinitions)
         {
             var tasks = releaseDefinitions.Select(DeployReleaseToProdWithStatusResult).ToArray();
-            Task.WaitAll(tasks);
+            await Task.WhenAll(tasks);
 
             return tasks.Select(x => x.Result).ToList();
         }
@@ -173,34 +172,27 @@ namespace DevLab.AzureAdapter
 
         public async Task<List<ReleaseDefinition>> GetReleaseDefinitionsAsync()
         {
-            try
+            var requestUri = $"release/definitions?api-version=6.0";
+            var result = await _httpClient.GetAsync(requestUri);
+            result.EnsureSuccessStatusCode();
+            var jsonContent = await result.Content.ReadAsStringAsync();
+            var releaseDefinitions = JsonSerializer.Deserialize<ReleaseDefinitionList>(jsonContent, _jsonOptions).Value;
+
+            var validReleases = new List<ReleaseDefinition>();
+            foreach (var releaseDefinition in releaseDefinitions)
             {
-                var requestUri = $"release/definitions?api-version=6.0";
-                var result = await _httpClient.GetAsync(requestUri);
-                result.EnsureSuccessStatusCode();
-                var jsonContent = await result.Content.ReadAsStringAsync();
-                var releaseDefinitions = JsonSerializer.Deserialize<ReleaseDefinitionList>(jsonContent, _jsonOptions).Value;
+                var allReleases = await GetAllReleasesForDefintionIdAsync(releaseDefinition.Id);
+                if (allReleases == null || allReleases.Value == null || !allReleases.Value.Any())
+                    continue;
 
-                var validReleases = new List<ReleaseDefinition>();
-                foreach (var releaseDefinition in releaseDefinitions)
-                {
-                    var allReleases = await GetAllReleasesForDefintionIdAsync(releaseDefinition.Id);
-                    if (allReleases == null || allReleases.Value == null || !allReleases.Value.Any())
-                        continue;
+                var prodRelease = IdentifyPotentialProdRelease(allReleases);
+                if (prodRelease == null)
+                    continue;
 
-                    var prodRelease = IdentifyPotentialProdRelease(allReleases);
-                    if (prodRelease == null)
-                        continue;
-
-                    validReleases.Add(releaseDefinition);
-                }
-
-                return validReleases;
+                validReleases.Add(releaseDefinition);
             }
-            catch (Exception)
-            {
-                return new List<ReleaseDefinition>();
-            }
+
+            return validReleases;
         }
     }
 }

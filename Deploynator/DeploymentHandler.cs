@@ -51,7 +51,7 @@ namespace Deploynator
             var cancellationTokenSource = new CancellationTokenSource();
             await StartWaitingSequence(cancellationTokenSource.Token);
             
-            var results = _azureReleaseRepository.DeployReleasesToProdAsync(((DeployArgs) deployArgs).SelectedDeloyments);
+            var results = await _azureReleaseRepository.DeployReleasesToProdAsync(((DeployArgs) deployArgs).SelectedDeloyments);
 
             cancellationTokenSource.Cancel();
             _eventBus.OnReleasesSucceeded(results);
