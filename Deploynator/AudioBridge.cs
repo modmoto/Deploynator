@@ -48,7 +48,7 @@ namespace Deploynator
 
         private async void PlayDeselectedDeloyment(object sender, EventArgs args)
         {
-            await Play($"{(args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name} removed from Deployment, bitch please");
+            await Play($"{(args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name} removed from Deployment");
         }
 
         private async void PlaySelectedSelectedDeloyment(object sender, EventArgs args)
