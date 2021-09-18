@@ -15,17 +15,16 @@ namespace DevLabs.AzureAdapter.Tests
     public class AzureReleaseRepositoryTests
     {
         private MockHttpMessageHandler _mockHttp;
-        private readonly HttpClient _httpClient;
         private AzureReleaseRepository _sut;
         private Uri _baseUri;
 
         public AzureReleaseRepositoryTests()
         {
             _mockHttp = new MockHttpMessageHandler();
-            _httpClient = _mockHttp.ToHttpClient();
+            var httpClient = _mockHttp.ToHttpClient();
             _baseUri = new Uri("https://localhost:1234");
-            _httpClient.BaseAddress = _baseUri;
-            _sut = new AzureReleaseRepository(_httpClient);
+            httpClient.BaseAddress = _baseUri;
+            _sut = new AzureReleaseRepository(httpClient);
         }
 
         [Fact]

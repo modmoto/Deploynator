@@ -29,6 +29,10 @@ namespace DevLab.AzureAdapter
                 var encodedAuth = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("AZURE_TOKEN") ?? "lel");
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(encodedAuth));
             }
+            else
+            {
+                _httpClient = httpClient;
+            }
 
             _jsonOptions = new JsonSerializerOptions();
             _jsonOptions.PropertyNameCaseInsensitive = true;
