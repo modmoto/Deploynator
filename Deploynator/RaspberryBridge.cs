@@ -11,13 +11,12 @@ namespace Deploynator
     {
         private readonly ILogger<RaspberryBridge> _logger;
         private readonly EventBus _eventBus;
-        private readonly GpioController _controller;
+        private GpioController _controller;
         private bool _releaseButtonDown;
         private bool _upButtonDown;
         private bool _downButtonDown;
         private bool _selectButtonDown;
         private bool _deselectButtonDown;
-        private const int Led1 = 10;
         private const int ReleaseButton = 38;
 
         private const int UpButton = 33;
@@ -29,33 +28,38 @@ namespace Deploynator
         {
             _logger = logger;
             _eventBus = eventBus;
-            _controller = new GpioController(PinNumberingScheme.Board);
-
-            _controller.OpenPin(Led1, PinMode.Output);
-            _controller.OpenPin(ReleaseButton, PinMode.InputPullUp);
-            _controller.OpenPin(UpButton, PinMode.InputPullUp);
-            _controller.OpenPin(DownButton, PinMode.InputPullUp);
-            _controller.OpenPin(SelectButton, PinMode.InputPullUp);
-            _controller.OpenPin(DeselectButton, PinMode.InputPullUp);
-
-            _eventBus.ReleaseFailed += (_, _) => OnReleaseFailed();
-            _eventBus.ReleasesSucceeded += (_, _) => OnReleaseSuceeded();
         }
 
-        private void OnReleaseSuceeded()
+        private async Task InitializeRaspberryPins()
         {
-            // led an
-        }
+            var couldOpenPins = false;
+            do
+            {
+                try
+                {
+                    _controller = new GpioController(PinNumberingScheme.Board);
 
-        private void OnReleaseFailed()
-        {
-            //led an
+                    _controller.OpenPin(ReleaseButton, PinMode.InputPullUp);
+                    _controller.OpenPin(UpButton, PinMode.InputPullUp);
+                    _controller.OpenPin(DownButton, PinMode.InputPullUp);
+                    _controller.OpenPin(SelectButton, PinMode.InputPullUp);
+                    _controller.OpenPin(DeselectButton, PinMode.InputPullUp);
+                    _logger.LogInformation("RaspberryBridge initlialized");
+                    couldOpenPins = true;
+                }
+                catch (Exception)
+                {
+                    _logger.LogDebug("Failed to init RaspiBridge, waiting another second");
+                    await Task.Delay(1000);
+                }
+            } while (!couldOpenPins);
         }
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Service started");
+            _logger.LogInformation("Raspberry Bridge started, will init bridge now");
             _eventBus.OnServiceStarted();
+            await InitializeRaspberryPins();
 
             do
             {
@@ -91,30 +95,16 @@ namespace Deploynator
             if (_controller.Read(button) == true && buttonVar)
             {
                 buttonVar = false;
-                _logger.LogInformation($"released {button}");
             }
-        }
-
-        private void TurnOffLed(int pin)
-        {
-            _controller.Write(pin, PinValue.Low);
-        }
-
-        private void TurnOnLed(int pin)
-        {
-            _controller.Write(pin, PinValue.High);
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            Clean();
-            return Task.CompletedTask;
         }
 
         private void Clean()
         {
-            _controller.ClosePin(Led1);
             _controller.ClosePin(ReleaseButton);
+            _controller.ClosePin(DeselectButton);
+            _controller.ClosePin(SelectButton);
+            _controller.ClosePin(DownButton);
+            _controller.ClosePin(UpButton);
         }
     }
 }

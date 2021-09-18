@@ -22,6 +22,9 @@ namespace Deploynator
         public event EventHandler DeselectedDeloyment;
         public event EventHandler ReleaseLoaded;
         public event EventHandler LanguageChanged;
+        public event EventHandler WaitingSequenceStarted;
+        public event EventHandler FoundJoke;
+        public event EventHandler JokeFinished;
 
         public virtual void OnLanguageChanged(string newLanguage)
         {
@@ -101,7 +104,7 @@ namespace Deploynator
             handler?.Invoke(this, new DeployArgs(releaseDefinitions));
         }
 
-        public void OnReleaseCountdownFinished(IEnumerable<ReleaseDefinition> selectedDeloyments)
+        public void OnReleaseCountdownFinished(List<ReleaseDefinition> selectedDeloyments)
         {
             var handler = ReleaseCountdownFinished;
             handler?.Invoke(this, new DeployArgs(selectedDeloyments));
@@ -118,6 +121,34 @@ namespace Deploynator
             var handler = ReleaseLoaded;
             handler?.Invoke(this, new DeployArgs(releaseDefinitions));
         }
+
+        public void OnWaitingSequenceStarted()
+        {
+            var handler = WaitingSequenceStarted;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnFoundJoke(string joke)
+        {
+            var handler = FoundJoke;
+            handler?.Invoke(this, new JokeArgs(joke));
+        }
+
+        public void OnJokeFinished()
+        {
+            var handler = JokeFinished;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public class JokeArgs : EventArgs
+    {
+        public string Joke { get; }
+
+        public JokeArgs(string joke)
+        {
+            Joke = joke;
+        }
     }
 
     public class LanguageArgs : EventArgs
@@ -132,9 +163,9 @@ namespace Deploynator
 
     public class DeployArgs : EventArgs
     {
-        public IEnumerable<ReleaseDefinition> SelectedDeloyments { get; }
+        public List<ReleaseDefinition> SelectedDeloyments { get; }
 
-        public DeployArgs(IEnumerable<ReleaseDefinition> selectedDeloyments)
+        public DeployArgs(List<ReleaseDefinition> selectedDeloyments)
         {
             SelectedDeloyments = selectedDeloyments;
         }

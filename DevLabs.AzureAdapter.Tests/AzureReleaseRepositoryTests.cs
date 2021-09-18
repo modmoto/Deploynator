@@ -9,20 +9,18 @@ using DevLab.AzureAdapter.DTOs;
 using FluentAssertions;
 using RichardSzalay.MockHttp;
 using Xunit;
-using Environment = DevLab.AzureAdapter.DTOs.Environment;
 
 namespace DevLabs.AzureAdapter.Tests
 {
     public class AzureReleaseRepositoryTests
     {
         private MockHttpMessageHandler _mockHttp;
-        private HttpClient _httpClient;
+        private readonly HttpClient _httpClient;
         private AzureReleaseRepository _sut;
         private Uri _baseUri;
 
         public AzureReleaseRepositoryTests()
         {
-
             _mockHttp = new MockHttpMessageHandler();
             _httpClient = _mockHttp.ToHttpClient();
             _baseUri = new Uri("https://localhost:1234");
@@ -52,7 +50,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 1,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,
@@ -82,7 +80,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 1,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,
@@ -119,7 +117,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 1,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,
@@ -160,7 +158,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 1,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,
@@ -214,7 +212,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 1,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,
@@ -244,7 +242,7 @@ namespace DevLabs.AzureAdapter.Tests
             var succededReleaseInfo = new ReleaseInformation
             {
                 Id = 1,
-                Environments = new List<Environment>
+                Environments = new List<Stage>
                 {
                     new()
                     {
@@ -297,7 +295,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 1,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,
@@ -322,7 +320,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 3,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,
@@ -340,7 +338,7 @@ namespace DevLabs.AzureAdapter.Tests
                     new()
                     {
                         Id = 4,
-                        Environments = new List<Environment> {
+                        Environments = new List<Stage> {
                             new()
                             {
                                 Id = 0,

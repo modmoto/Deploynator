@@ -23,35 +23,15 @@ namespace Deploynator
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            Thread.Sleep(10000);
 
-            var eventBus = new EventBus();
-            services.AddSingleton(eventBus);
-            var audioStream = new AudioStream(eventBus);
-            services.AddSingleton(audioStream);
-            services.AddSingleton(new LcdScreen(eventBus));
+            services.AddSingleton<EventBus>();
+            services.AddSingleton<AudioStream>();
+            services.AddSingleton<LcdScreen>();
 
-            var httpClient = CreateHttpClient();
-
-            services.AddSingleton(new DeploymentHandler(new AzureReleaseRepository(httpClient), eventBus, audioStream));
+            services.AddSingleton<IAzureReleaseRepository, AzureReleaseRepository>();
+            services.AddSingleton<DeploymentHandler>();
 
             services.AddHostedService<RaspberryBridge>();
-        }
-
-        private static HttpClient CreateHttpClient()
-        {
-            var handler = new HttpClientHandler();
-            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-            handler.ServerCertificateCustomValidationCallback =
-                (httpRequestMessage, cert, cetChain, policyErrors) => { return true; };
-
-            var httpClient = new HttpClient(handler);
-            httpClient.BaseAddress = new Uri("https://atdevops.azure.intern/NgCollection/Devlab/_apis/");
-            var encodedAuth = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("AZURE_TOKEN") ?? "lel");
-            Console.WriteLine($"Token: {Environment.GetEnvironmentVariable("AZURE_TOKEN") ?? "lel"}");
-            httpClient.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(encodedAuth));
-            return httpClient;
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

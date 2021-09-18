@@ -14,23 +14,56 @@ namespace Deploynator
         public AudioStream(EventBus eventBus)
         {
             _eventBus = eventBus;
-            _eventBus.ReleasesTriggered += (_, args) => PlayReleases(args);
-            _eventBus.ServiceStarted += (_, _) => Play("Deployment ready, awaiting deployment sequence");
-            _eventBus.ReleaseFailed += (_, _) => Play("Release failed, please stay calm and leave the building in an orderly fashion");
-            _eventBus.ReleasesSucceeded += (_, args) => PlaySuccessfulDeployments(args as DeploymentResultsArgs);
-            _eventBus.LanguageChanged += (_, args) => CreateSynthi(args as LanguageArgs);
 
             CreateSynthi(new LanguageArgs("en-US-SaraNeural"));
 
-            _eventBus.SelectedDeloyment += (_, args) =>
-            {
-                Play($"{(args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name} selected for Deployment");
-            };
+            _eventBus.ReleasesTriggered += PlayReleasesTriggered;
+            _eventBus.ServiceStarted += PlayServiceStarted;
+            _eventBus.ReleaseFailed += PlayReleaseFailed;
+            _eventBus.ReleasesSucceeded += PlayReleasesSucceeded;
+            _eventBus.LanguageChanged += (_, args) => CreateSynthi(args as LanguageArgs);
 
-            _eventBus.DeselectedDeloyment += (_, args) =>
-            {
-                Play($"{(args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name} removed from Deployment, bitch please");
-            };
+            _eventBus.SelectedDeloyment += PlaySelectedSelectedDeloyment;
+            _eventBus.DeselectedDeloyment += PlayDeselectedDeloyment;
+            _eventBus.WaitingSequenceStarted += PlayWaitingSequenceStarted;
+            _eventBus.FoundJoke += PlayFoundJoke;
+        }
+
+        private async void PlayFoundJoke(object sender, EventArgs e)
+        {
+            await Play(((JokeArgs)e).Joke);
+            _eventBus.OnJokeFinished();
+        }
+
+        private async void PlayWaitingSequenceStarted(object sender, EventArgs e)
+        {
+            await Play("To ease your pain of waiting, let me tell you some excellent jokes:");
+            await Task.Delay(500);
+        }
+
+        private async void PlayDeselectedDeloyment(object sender, EventArgs args)
+        {
+            await Play($"{(args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name} removed from Deployment, bitch please");
+        }
+
+        private async void PlaySelectedSelectedDeloyment(object sender, EventArgs args)
+        {
+            await Play($"{(args as SelectReleaseDefinitionArgs)?.ReleaseDefinition.Name} selected for Deployment");
+        }
+
+        private async void PlayReleasesSucceeded(object sender, EventArgs args)
+        {
+            await PlaySuccessfulDeployments(args as DeploymentResultsArgs);
+        }
+
+        private async void PlayReleaseFailed(object sender, EventArgs e)
+        {
+            await Play("Release failed, please stay calm and leave the building in an orderly fashion");
+        }
+
+        private async void PlayServiceStarted(object sender, EventArgs e)
+        {
+            await Play("Deployment ready, awaiting deployment sequence");
         }
 
         private void CreateSynthi(LanguageArgs languageArgs)
@@ -41,7 +74,7 @@ namespace Deploynator
             _synthesizer = new SpeechSynthesizer(config);
         }
 
-        private async Task PlayReleases(EventArgs args)
+        private async void PlayReleasesTriggered(object sender, EventArgs args)
         {
             var deployArgs = args as DeployArgs;
             var deloyments = deployArgs.SelectedDeloyments;

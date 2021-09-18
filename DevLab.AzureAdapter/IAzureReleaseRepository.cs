@@ -5,7 +5,7 @@ using DevLab.AzureAdapter.DTOs;
 namespace DevLab.AzureAdapter
 {
     public interface IAzureReleaseRepository{
-        Task<IEnumerable<ReleaseDefinition>> GetReleaseDefinitionsAsync();
+        Task<List<ReleaseDefinition>> GetReleaseDefinitionsAsync();
         IEnumerable<DeploymentResult> DeployReleasesToProdAsync(IEnumerable<ReleaseDefinition> releaseDefinitions);
     }
 }
