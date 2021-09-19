@@ -20,7 +20,7 @@ namespace Deploynator
 
         public int CurrentIndex => _index;
 
-        private readonly string[] LAUGH_VARIATIONS = {"HA HA HA", "HI HI HI", "HO HO HO", "VERY FUNNY", "ROFL", "LOL", "I don't get it!"};
+        private readonly string[] LAUGH_VARIATIONS = {"HA HA HA", "HaHaHaHaHa HAHAHAHAH", "HaHa", "HEHEHEHEHE VERY FUNNY", "ROFL", "LOL", "I don't get it!"};
 
         public DeploymentHandler(IAzureReleaseRepository azureReleaseRepository, EventBus eventBus)
         {
