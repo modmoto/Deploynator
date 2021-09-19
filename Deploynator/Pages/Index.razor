@@ -1,40 +1,70 @@
 @page "/"
-
-<h1>@_handler.CurrentSelection</h1>
-
-<h1>All Deployments</h1>
-@foreach (var d in _handler.ReleaseDefinitions)
-{
-    <h4>@d.Name</h4>
-}
-
-
-<h1>Selected Deployments</h1>
-@foreach (var d in _handler.SelectedReleaseDefinitions)
-{
-    <h4>@d.Name</h4>
-}
-
-<button @onclick="() => Do(() => _handler.MoveU())">ub</button>
-<button @onclick="() => Do(() => _handler.MoveDown())">down</button>
-<button @onclick="() => Do(() => _handler.Select())">select</button>
-<button @onclick="() => Do(() => _handler.Deselect())">unselect</button>
-<button @onclick="() => Do(() => _handler.LoadReleases(null, null))">Load Releases</button>
-<button @onclick="() => Do(() => _eventBus.OnReleaseButtonTriggered())">DELOY</button>
-
-<select class="custom-select" @onchange="OnLanguegeChanged" title="Region is required ">  
-    <option value="Select" selected disabled="disabled">(Choose person)</option>
-    @foreach (var language in languages)
-    {
-        <option value="@language"> @language</option>
-    }
-</select>  
-
+@inject IJSRuntime JsRuntime
 @inject EventBus _eventBus
 @inject DeploymentHandler _handler
 
-@code {
+<div id="test" class="deploynator-outer-container">
+    <div class="deploynator-inner-container">
+        <div class="deploy-container">
+            <div class="deploy-button-container">
+                <div id="deploy-button" @onclick="() => Do(() => _eventBus.OnReleaseButtonTriggered())">
+                    <span class="deploy-button-label">Deploy</span>
+                </div>
+            </div>
+        </div>
+        <div class="control-container">
+            <div class="screens-container">
+                <div class="lcd-screen">
+                    <span class="release-selection">@(_handler.ReleaseDefinitions.Any() ? _handler.ReleaseDefinitions[_handler.CurrentIndex].Name : "No Releases found")</span>
+                </div>
+            </div>
+            <div class="buttons-container">
+                <div class="buttons-top-row">
+                    <div class="control-button invisible"></div>
+                    <div class="control-button black active" @onclick="() => Do(() => _handler.Select())">
+                        <i class="icon fas fa-check"></i>
+                    </div>
+                    <div class="control-button invisible"></div>
+                </div>
+                <div class="buttons-mid-row">
+                    <div class="control-button active" @onclick="() => Do(() => _handler.MoveDown())">
+                        <i class="icon fas fa-angle-left"></i>
+                    </div>
+                    <div class="control-button invisible"></div>
+                    <div class="control-button active" @onclick="() => Do(() => _handler.MoveU())">
+                        <i class="icon fas fa-angle-right"></i>
+                    </div>
+                </div>
+                <div class="buttons-bottom-row">
+                    <div class="control-button invisible"></div>
+                    <div class="control-button black active" @onclick="() => Do(() => _handler.Deselect())">
+                        <i class="icon fas fa-times"></i>
+                    </div>
+                    <div class="control-button invisible"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
+<div id="additional-content">
+    <div class="row">
+        <button class="btn btn-light" @onclick="() => Do(() => _handler.LoadReleases(null, null))">Load Releases</button>
+
+    </div>
+    <div class="row">
+        <select class="custom-select" @onchange="OnLanguegeChanged" title="Region is required ">
+            <option value="Select" selected disabled="disabled">(Choose person)</option>
+            @foreach (var language in languages)
+            {
+                <option value="@language"> @language</option>
+            }
+        </select>
+    </div>
+</div>
+
+@code
+{
     private List<string> languages = new()
     {
         "en-US-SaraNeural",
@@ -74,8 +104,14 @@
         StateHasChanged();
     }
 
-    private void OnLanguegeChanged(ChangeEventArgs e) {
+    private void OnLanguegeChanged(ChangeEventArgs e)
+    {
         var value = e.Value?.ToString();
         _eventBus.OnLanguageChanged(value);
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        JsRuntime.InvokeVoidAsync("attachHandlers");
     }
 }

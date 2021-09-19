@@ -18,6 +18,8 @@ namespace Deploynator
         private int _index;
         private bool _isTellingJoke;
 
+        public int CurrentIndex => _index;
+
         private readonly string[] LAUGH_VARIATIONS = {"HA HA HA", "HI HI HI", "HO HO HO", "VERY FUNNY", "ROFL", "LOL", "I don't get it!"};
 
         public DeploymentHandler(IAzureReleaseRepository azureReleaseRepository, EventBus eventBus)
