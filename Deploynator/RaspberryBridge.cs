@@ -54,7 +54,7 @@ namespace Deploynator
                 }
                 catch (Exception)
                 {
-                    _logger.LogDebug("Failed to init RaspiBridge, waiting another second");
+                    _logger.LogInformation("Failed to init RaspiBridge, waiting another second");
                     await Task.Delay(1000);
                 }
             } while (!couldOpenPins);
