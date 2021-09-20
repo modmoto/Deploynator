@@ -25,6 +25,8 @@ namespace Deploynator
         public event EventHandler FoundJoke;
         public event EventHandler JokeFinished;
         public event EventHandler ErrorNoReleasesSelected;
+        public event EventHandler UpAndDownButtonTriggered;
+        public event EventHandler SelectAndDeselectButtonTriggered;
 
         public virtual void OnLanguageChanged(string newLanguage)
         {
@@ -137,6 +139,18 @@ namespace Deploynator
         public void OnErrorNoReleasesSelected()
         {
             var handler = ErrorNoReleasesSelected;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnSelectAndDeselectButtonTriggered()
+        {
+            var handler = SelectAndDeselectButtonTriggered;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnUpAndDownButtonTriggered()
+        {
+            var handler = UpAndDownButtonTriggered;
             handler?.Invoke(this, EventArgs.Empty);
         }
     }

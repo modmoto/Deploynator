@@ -15,8 +15,11 @@ namespace Deploynator
         private bool _releaseButtonDown;
         private bool _upButtonDown;
         private bool _downButtonDown;
+        private bool _upAndDownButtonDown;
         private bool _selectButtonDown;
         private bool _deselectButtonDown;
+        private bool _selectAndDeseceltButtonDown;
+
         private const int ReleaseButton = 38;
 
         private const int UpButton = 33;
@@ -76,6 +79,17 @@ namespace Deploynator
                     CheckButtonState(SelectButton, ref _selectButtonDown, () => _eventBus.OnSelectButtonTriggered());
                     CheckButtonState(DeselectButton, ref _deselectButtonDown, () => _eventBus.OnDeselectButtonTriggered());
 
+                    CheckDoubleButtonState(
+                        _deselectButtonDown,
+                        _selectButtonDown,
+                        ref _selectAndDeseceltButtonDown,
+                        () => _eventBus.OnSelectAndDeselectButtonTriggered());
+                    CheckDoubleButtonState(
+                        _upButtonDown,
+                        _downButtonDown,
+                        ref _upAndDownButtonDown,
+                        () => _eventBus.OnUpAndDownButtonTriggered());
+
                     await Task.Delay(20, cancellationToken);
                 }
                 catch (Exception e)
@@ -86,6 +100,21 @@ namespace Deploynator
             } while (!cancellationToken.IsCancellationRequested);
 
             Clean();
+        }
+
+        private void CheckDoubleButtonState(
+            bool button1,
+            bool button2,
+            ref bool buttonIsDown,
+            Action stateFuntion)
+        {
+            if (button1 && button2)
+            {
+                buttonIsDown = true;
+                stateFuntion.Invoke();
+            }
+
+            buttonIsDown = false;
         }
 
         private void CheckButtonState(int button, ref bool buttonVar, Action eventTrigger)
