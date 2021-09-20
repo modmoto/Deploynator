@@ -8,16 +8,20 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using DevLab.AzureAdapter.DTOs;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DevLab.AzureAdapter
 {
     public class AzureReleaseRepository : IAzureReleaseRepository
     {
+        private readonly ILogger<AzureReleaseRepository> _logger;
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        public AzureReleaseRepository(HttpClient httpClient = null)
+        public AzureReleaseRepository(HttpClient httpClient = null, ILogger<AzureReleaseRepository> logger = null)
         {
+            _logger = logger ?? NullLogger<AzureReleaseRepository>.Instance;
             if (httpClient == null)
             {
                 var handler = new HttpClientHandler();
@@ -176,27 +180,35 @@ namespace DevLab.AzureAdapter
 
         public async Task<List<ReleaseDefinition>> GetReleaseDefinitionsAsync()
         {
-            var requestUri = $"release/definitions?api-version=6.0";
-            var result = await _httpClient.GetAsync(requestUri);
-            result.EnsureSuccessStatusCode();
-            var jsonContent = await result.Content.ReadAsStringAsync();
-            var releaseDefinitions = JsonSerializer.Deserialize<ReleaseDefinitionList>(jsonContent, _jsonOptions).Value;
-
-            var validReleases = new List<ReleaseDefinition>();
-            foreach (var releaseDefinition in releaseDefinitions)
+            try
             {
-                var allReleases = await GetAllReleasesForDefintionIdAsync(releaseDefinition.Id);
-                if (allReleases == null || allReleases.Value == null || !allReleases.Value.Any())
-                    continue;
+                var requestUri = $"release/definitions?api-version=6.0";
+                var result = await _httpClient.GetAsync(requestUri);
+                result.EnsureSuccessStatusCode();
+                var jsonContent = await result.Content.ReadAsStringAsync();
+                var releaseDefinitions = JsonSerializer.Deserialize<ReleaseDefinitionList>(jsonContent, _jsonOptions).Value;
 
-                var prodRelease = IdentifyPotentialProdRelease(allReleases);
-                if (prodRelease == null)
-                    continue;
+                var validReleases = new List<ReleaseDefinition>();
+                foreach (var releaseDefinition in releaseDefinitions)
+                {
+                    var allReleases = await GetAllReleasesForDefintionIdAsync(releaseDefinition.Id);
+                    if (allReleases == null || allReleases.Value == null || !allReleases.Value.Any())
+                        continue;
 
-                validReleases.Add(releaseDefinition);
+                    var prodRelease = IdentifyPotentialProdRelease(allReleases);
+                    if (prodRelease == null)
+                        continue;
+
+                    validReleases.Add(releaseDefinition);
+                }
+
+                return validReleases;
             }
-
-            return validReleases;
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to load releases, most likely not in the right Grenke network");
+                return new List<ReleaseDefinition>();
+            }
         }
     }
 }
