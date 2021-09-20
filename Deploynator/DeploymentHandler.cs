@@ -31,7 +31,6 @@ namespace Deploynator
             "tr-TR-EmelNeural",
             "tr-TR-AhmetNeural",
         };
-        public string SelectedVoice = "en-US-SaraNeural";
         public List<ReleaseDefinition> ReleaseDefinitions = new();
         public List<ReleaseDefinition> SelectedReleaseDefinitions = new();
         private int _index;
