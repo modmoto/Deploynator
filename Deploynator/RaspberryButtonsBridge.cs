@@ -83,12 +83,14 @@ namespace Deploynator
                         _deselectButtonDown,
                         _selectButtonDown,
                         ref _selectAndDeseceltButtonDown,
-                        () => _eventBus.OnSelectAndDeselectButtonTriggered());
+                        () => _eventBus.OnSelectAndDeselectButtonTriggered(),
+                        () => _eventBus.OnSelectAndDeselectButtonReleased());
                     CheckDoubleButtonState(
                         _upButtonDown,
                         _downButtonDown,
                         ref _upAndDownButtonDown,
-                        () => _eventBus.OnLeftAndRightButtonTriggered());
+                        () => _eventBus.OnLeftAndRightButtonTriggered(),
+                        () => _eventBus.OnLeftAndRightButtonReleased());
 
                     await Task.Delay(20, cancellationToken);
                 }
@@ -106,15 +108,22 @@ namespace Deploynator
             bool button1,
             bool button2,
             ref bool buttonIsDown,
-            Action stateFuntion)
+            Action enableFunction,
+            Action disableFunction)
         {
-            if (button1 && button2)
+            if (button1 && button2 & !buttonIsDown)
             {
                 buttonIsDown = true;
-                stateFuntion.Invoke();
+                enableFunction.Invoke();
             }
-
-            buttonIsDown = false;
+            else
+            {
+                if (buttonIsDown && button1 && button2)
+                {
+                    buttonIsDown = false;
+                    disableFunction.Invoke();
+                }
+            }
         }
 
         private void CheckButtonState(int button, ref bool buttonVar, Action eventTrigger)

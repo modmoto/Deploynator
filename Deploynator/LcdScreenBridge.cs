@@ -21,6 +21,16 @@ namespace Deploynator
 
             eventBus.ServiceStarted += InitlializeLcdScreen;
 
+            eventBus.LanguageChanged += (_, args) =>
+            {
+                WriteText(((LanguageArgs)args).Language);
+            };
+            
+            eventBus.LeftAndRightButtonTriggered += (_, _) =>
+            {
+                WriteText("Voice selection mode enabled");
+            };
+            
             eventBus.PreselectedDeloyment += (_, args) =>
             {
                 var release = (SelectReleaseDefinitionArgs)args;

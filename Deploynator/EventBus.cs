@@ -27,6 +27,8 @@ namespace Deploynator
         public event EventHandler ErrorNoReleasesSelected;
         public event EventHandler LeftAndRightButtonTriggered;
         public event EventHandler SelectAndDeselectButtonTriggered;
+        public event EventHandler SelectAndDeselectButtonReleased;
+        public event EventHandler LeftAndRightButtonReleased;
        
         public virtual void OnLanguageChanged(string newLanguage)
         {
@@ -151,6 +153,17 @@ namespace Deploynator
         public void OnLeftAndRightButtonTriggered()
         {
             var handler = LeftAndRightButtonTriggered;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnSelectAndDeselectButtonReleased()
+        {
+            var handler = SelectAndDeselectButtonReleased;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
+        public void OnLeftAndRightButtonReleased()
+        {
+            var handler = LeftAndRightButtonReleased;
             handler?.Invoke(this, EventArgs.Empty);
         }
     }

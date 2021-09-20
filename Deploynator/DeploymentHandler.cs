@@ -60,7 +60,9 @@ namespace Deploynator
             _eventBus.ReleasesSucceeded += LoadReleases;
             _eventBus.JokeFinished += (_, _) => _isTellingJoke = false;
             _eventBus.LeftAndRightButtonTriggered += (_, _) =>  _isVoiceSelectionMode = true;
+            _eventBus.LeftAndRightButtonReleased += (_, _) =>  _isVoiceSelectionMode = false;
             _eventBus.SelectAndDeselectButtonTriggered += LoadReleases;
+            _eventBus.SelectAndDeselectButtonReleased += (_, _) => { };
         }
 
         private void StartCountdownSequence(object sender, EventArgs e)
@@ -117,6 +119,7 @@ namespace Deploynator
 
         public void Select()
         {
+            if (_isVoiceSelectionMode) return;
             if (ReleaseDefinitions.Count <= _index) return;
 
             SelectedReleaseDefinitions.Add(ReleaseDefinitions[_index]);
@@ -163,6 +166,8 @@ namespace Deploynator
 
         public void Deselect()
         {
+            if (_isVoiceSelectionMode) return;
+            if (ReleaseDefinitions.Count <= _index) return;
             SelectedReleaseDefinitions = SelectedReleaseDefinitions.Where(d => d.Id != ReleaseDefinitions[_index].Id).ToList();
             _eventBus.OnDeselectedDeloyment(ReleaseDefinitions[_index], _index + 1);
         }
