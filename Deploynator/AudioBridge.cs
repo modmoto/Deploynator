@@ -2,18 +2,21 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CognitiveServices.Speech;
+using Microsoft.Extensions.Logging;
 
 namespace Deploynator
 {
     public class AudioBridge
     {
         private readonly EventBus _eventBus;
+        private readonly ILogger<AudioBridge> _logger;
         private SpeechSynthesizer _synthesizer;
         private LanguageArgs _languageArgs;
 
-        public AudioBridge(EventBus eventBus)
+        public AudioBridge(EventBus eventBus, ILogger<AudioBridge> logger)
         {
             _eventBus = eventBus;
+            _logger = logger;
 
             CreateSynthi(new LanguageArgs("en-US-SaraNeural"));
 
@@ -91,7 +94,14 @@ namespace Deploynator
 
         public async Task Play(string message)
         {
-            await _synthesizer.SpeakTextAsync(message);
+            try
+            {
+                await _synthesizer.SpeakTextAsync(message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Could not play sound, network dead?");
+            }
         }
 
         private async Task PlaySuccessfulDeployments(DeploymentResultsArgs deploymentResultsArgs)

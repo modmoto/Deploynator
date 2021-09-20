@@ -9,13 +9,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Deploynator
 {
-    public class LcdScreen
+    public class LcdScreenBridge
     {
-        private readonly ILogger<LcdScreen> _logger;
+        private readonly ILogger<LcdScreenBridge> _logger;
         private Lcd2004 _lcd;
         private string _lastTextCommand;
 
-        public LcdScreen(EventBus eventBus, ILogger<LcdScreen> logger)
+        public LcdScreenBridge(EventBus eventBus, ILogger<LcdScreenBridge> logger)
         {
             _logger = logger;
 
@@ -83,26 +83,33 @@ namespace Deploynator
         {
             if (_lcd != null)
             {
-                _lcd.Clear();
-                _lcd.SetCursorPosition(0, 0);
-                var words = text.Split(" ");
-                var line = "";
-                foreach (var word in words)
+                try
                 {
-                    if (line.Length + word.Length > 16)
+                    _lcd.Clear();
+                    _lcd.SetCursorPosition(0, 0);
+                    var words = text.Split(" ");
+                    var line = "";
+                    foreach (var word in words)
                     {
-                        _lcd.Write(line);
-                        _lcd.SetCursorPosition(0, 1);
-                        line = word;
-                    }
-                    else
-                    {
-                        line += $"{word} ";
+                        if (line.Length + word.Length > 16)
+                        {
+                            _lcd.Write(line);
+                            _lcd.SetCursorPosition(0, 1);
+                            line = word;
+                        }
+                        else
+                        {
+                            line += $"{word} ";
+                        }
+
                     }
 
+                    _lcd.Write(line);
                 }
-
-                _lcd.Write(line);
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Could not write to lcd, pins dead?");
+                }
             }
             else
             {

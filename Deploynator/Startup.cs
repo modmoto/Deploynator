@@ -25,13 +25,13 @@ namespace Deploynator
 
             services.AddSingleton<EventBus>();
             services.AddSingleton<AudioBridge>();
-            services.AddSingleton<LcdScreen>();
+            services.AddSingleton<LcdScreenBridge>();
 
             // services.AddSingleton<IAzureReleaseRepository, FakeAzureReleaseRepository>();
             services.AddSingleton<IAzureReleaseRepository, AzureReleaseRepository>();
             services.AddSingleton<DeploymentHandler>();
 
-            services.AddHostedService<RaspberryBridge>();
+            services.AddHostedService<RaspberryButtonsBridge>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

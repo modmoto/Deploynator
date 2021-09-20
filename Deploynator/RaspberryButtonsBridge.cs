@@ -7,9 +7,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Deploynator
 {
-    public class RaspberryBridge : BackgroundService
+    public class RaspberryButtonsBridge : BackgroundService
     {
-        private readonly ILogger<RaspberryBridge> _logger;
+        private readonly ILogger<RaspberryButtonsBridge> _logger;
         private readonly EventBus _eventBus;
         private GpioController _controller;
         private bool _releaseButtonDown;
@@ -24,14 +24,14 @@ namespace Deploynator
         private const int SelectButton = 35;
         private const int DeselectButton = 37;
 
-        public RaspberryBridge(ILogger<RaspberryBridge> logger, EventBus eventBus, IServiceProvider serviceProvider)
+        public RaspberryButtonsBridge(ILogger<RaspberryButtonsBridge> logger, EventBus eventBus, IServiceProvider serviceProvider)
         {
             _logger = logger;
             _eventBus = eventBus;
 
             // Hack to get the DI to trigger
             serviceProvider.GetService(typeof(AudioBridge));
-            serviceProvider.GetService(typeof(LcdScreen));
+            serviceProvider.GetService(typeof(LcdScreenBridge));
             serviceProvider.GetService(typeof(DeploymentHandler));
         }
 
