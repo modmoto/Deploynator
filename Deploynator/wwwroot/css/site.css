@@ -286,6 +286,7 @@
     font-family: 'Press Start 2P', cursive;
     padding-left: 15px;
     padding-right: 15px;
+    text-align: center;
 }
 
 .lcd-screen:after {

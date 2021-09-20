@@ -15,7 +15,7 @@
         <div class="control-container">
             <div class="screens-container">
                 <div class="lcd-screen">
-                    <span class="release-selection">@(_handler.ReleaseDefinitions.Any() ? _handler.ReleaseDefinitions[_handler.CurrentIndex].Name : "No Releases found")</span>
+                    <span class="release-selection">@(ReleseDef())</span>
                 </div>
             </div>
             <div class="buttons-container">
@@ -113,5 +113,18 @@
     protected override void OnAfterRender(bool firstRender)
     {
         JsRuntime.InvokeVoidAsync("attachHandlers");
+    }
+
+    private string ReleseDef()
+    {
+        if (_handler.ReleaseDefinitions.Any())
+        {
+            var releaseDefinition = _handler.ReleaseDefinitions[_handler.CurrentIndex];
+            var releseDef = $"{_handler.CurrentIndex + 1} {releaseDefinition.Name}";
+            return _handler.SelectedReleaseDefinitions.Any(r => r.Id == releaseDefinition.Id)
+                ? $"X {releseDef}" : releseDef;
+        }
+
+        return "No Releases found";
     }
 }
