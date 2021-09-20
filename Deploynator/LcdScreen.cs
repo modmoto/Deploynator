@@ -76,7 +76,7 @@ namespace Deploynator
                     _logger.LogInformation("Failed to init LCD Screen, waiting another second");
                     await Task.Delay(1000);
                 }
-            } while (_lcd != null);
+            } while (_lcd == null);
         }
 
         private void WriteText(string text)
