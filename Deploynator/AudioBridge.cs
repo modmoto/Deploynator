@@ -23,13 +23,32 @@ namespace Deploynator
             _eventBus.ReleasesTriggered += PlayReleasesTriggered;
             _eventBus.ServiceStarted += PlayServiceStarted;
             _eventBus.ReleasesSucceeded += PlayReleasesSucceeded;
-            _eventBus.LanguageChanged += (_, args) => CreateSynthi(args as LanguageArgs);
+            _eventBus.LanguageChanged += PlaySelectVoice;
 
             _eventBus.SelectedDeloyment += PlaySelectedSelectedDeloyment;
             _eventBus.DeselectedDeloyment += PlayDeselectedDeloyment;
             _eventBus.WaitingSequenceStarted += PlayWaitingSequenceStarted;
             _eventBus.FoundJoke += PlayFoundJoke;
             _eventBus.ErrorNoReleasesSelected += PlayErrorNoReleasesSelected;
+            _eventBus.SelectAndDeselectButtonTriggered += PlayReloadReleases;
+            _eventBus.LeftAndRightButtonTriggered += PlayEnteredSoundOptions;
+        }
+
+        private async void PlaySelectVoice(object sender, EventArgs e)
+        {
+            var languageArgs = (LanguageArgs)e;
+            CreateSynthi(languageArgs);
+            await Play("I am happy to assist with the next deployment");
+        }
+
+        private async void PlayEnteredSoundOptions(object sender, EventArgs e)
+        {
+            await Play("Voice selection mode enabled");
+        }
+
+        private async void PlayReloadReleases(object sender, EventArgs e)
+        {
+            await Play("Reloading releases");
         }
 
         private async void PlayErrorNoReleasesSelected(object sender, EventArgs e)
@@ -72,7 +91,7 @@ namespace Deploynator
         private void CreateSynthi(LanguageArgs languageArgs)
         {
             var config = SpeechConfig.FromSubscription("990a253fc3cb487e8f02867fcd3d86c2", "francecentral");
-            config.SpeechSynthesisVoiceName = languageArgs.NewLanguage;
+            config.SpeechSynthesisVoiceName = languageArgs.Language;
             _languageArgs = languageArgs;
             _synthesizer = new SpeechSynthesizer(config);
         }
@@ -91,7 +110,7 @@ namespace Deploynator
             }
             _eventBus.OnReleaseCountdownFinished(deloyments);
         }
-
+        
         public async Task Play(string message)
         {
             try
@@ -116,7 +135,7 @@ namespace Deploynator
                 await Play($"{deploymentResultsArg.ReleaseName} finished with status: {resultMessage}");
             }
 
-            if (_languageArgs.NewLanguage == "es-MX-JorgeNeural")
+            if (_languageArgs.Language == "es-MX-JorgeNeural")
             {
                 await Play("Status report finished! Happy cinco de mayo!");
 

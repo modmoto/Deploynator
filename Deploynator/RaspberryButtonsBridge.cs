@@ -74,8 +74,8 @@ namespace Deploynator
                 try
                 {
                     CheckButtonState(ReleaseButton, ref _releaseButtonDown, () => _eventBus.OnReleaseButtonTriggered());
-                    CheckButtonState(DownButton, ref _downButtonDown, () => _eventBus.OnDownButtonTriggered());
-                    CheckButtonState(UpButton, ref _upButtonDown, () => _eventBus.OnUpButtonTriggered());
+                    CheckButtonState(DownButton, ref _downButtonDown, () => _eventBus.OnRightButtonTriggered());
+                    CheckButtonState(UpButton, ref _upButtonDown, () => _eventBus.OnLeftButtonTriggered());
                     CheckButtonState(SelectButton, ref _selectButtonDown, () => _eventBus.OnSelectButtonTriggered());
                     CheckButtonState(DeselectButton, ref _deselectButtonDown, () => _eventBus.OnDeselectButtonTriggered());
 
@@ -88,7 +88,7 @@ namespace Deploynator
                         _upButtonDown,
                         _downButtonDown,
                         ref _upAndDownButtonDown,
-                        () => _eventBus.OnUpAndDownButtonTriggered());
+                        () => _eventBus.OnLeftAndRightButtonTriggered());
 
                     await Task.Delay(20, cancellationToken);
                 }

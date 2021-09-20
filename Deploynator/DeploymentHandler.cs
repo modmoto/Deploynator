@@ -13,10 +13,31 @@ namespace Deploynator
         private readonly EventBus _eventBus;
         private readonly IAzureReleaseRepository _azureReleaseRepository;
         private readonly RandomFactsApiAdapter _randomFactsApiAdapter;
+        public List<string> Voices = new()
+        {
+            "en-US-SaraNeural",
+            "es-MX-JorgeNeural",
+            "de-CH-JanNeural",
+            "de-DE-ConradNeural",
+            "de-AT-JonasNeural",
+            "de-AT-IngridNeural",
+            "fr-FR-DeniseNeural",
+            "hi-IN-MadhurNeural",
+            "hi-IN-SwaraNeural",
+            "mr-IN-AarohiNeural",
+            "mr-IN-ManoharNeural",
+            "en-IN-Heera",
+            "en-IN-Ravi",
+            "tr-TR-EmelNeural",
+            "tr-TR-AhmetNeural",
+        };
+        public string SelectedVoice = "en-US-SaraNeural";
         public List<ReleaseDefinition> ReleaseDefinitions = new();
         public List<ReleaseDefinition> SelectedReleaseDefinitions = new();
         private int _index;
+        private int _indexVoice;
         private bool _isTellingJoke;
+        private bool _isVoiceSelectionMode;
 
         public int CurrentIndex => _index;
 
@@ -29,19 +50,21 @@ namespace Deploynator
             _randomFactsApiAdapter = new RandomFactsApiAdapter();
 
             _eventBus.ReleaseCountdownFinished += TriggerReleasesAsync;
-            _eventBus.ReleaseButtonTriggered += StarteCountdownSequence;
+            _eventBus.ReleaseButtonTriggered += StartCountdownSequence;
 
-            _eventBus.UpButtonTriggered += (_, _) => MoveU();
-            _eventBus.DownButtonTriggered += (_, _) => MoveDown();
+            _eventBus.LeftButtonTriggered += (_, _) => MoveLeft();
+            _eventBus.RightButtonTriggered += (_, _) => MoveRight();
             _eventBus.SelectButtonTriggered += (_, _) => Select();
             _eventBus.DeselectButtonTriggered += (_, _) => Deselect();
 
             _eventBus.ServiceStarted += LoadReleases;
             _eventBus.ReleasesSucceeded += LoadReleases;
             _eventBus.JokeFinished += (_, _) => _isTellingJoke = false;
+            _eventBus.LeftAndRightButtonTriggered += (_, _) =>  _isVoiceSelectionMode = true;
+            _eventBus.SelectAndDeselectButtonTriggered += LoadReleases;
         }
 
-        private void StarteCountdownSequence(object sender, EventArgs e)
+        private void StartCountdownSequence(object sender, EventArgs e)
         {
             if (SelectedReleaseDefinitions.Count == 0)
             {
@@ -93,8 +116,6 @@ namespace Deploynator
             }, cancellationToken);
         }
 
-        public string CurrentSelection => ReleaseDefinitions.Count > _index ? ReleaseDefinitions[_index].Name : "No deployment available";
-
         public void Select()
         {
             if (ReleaseDefinitions.Count <= _index) return;
@@ -104,23 +125,41 @@ namespace Deploynator
             _eventBus.OnSelectedDeloyment(ReleaseDefinitions[_index], _index + 1);
         }
 
-        public void MoveDown()
+        public void MoveRight()
         {
-            if (_index <= 0) _index = ReleaseDefinitions.Count;
-            _index--;
-            _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index], _index + 1, IsSelected());
+            if (_isVoiceSelectionMode)
+            {
+                if (_indexVoice <= 0) _indexVoice = Voices.Count;
+                _indexVoice--;
+                _eventBus.OnLanguageChanged(Voices[_indexVoice]);    
+            }
+            else
+            {
+                if (_index <= 0) _index = ReleaseDefinitions.Count;
+                _index--;
+                _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index], _index + 1, IsSelected());    
+            }
+        }
+        
+        public void MoveLeft()
+        {
+            if (_isVoiceSelectionMode)
+            {
+                if (_indexVoice >= Voices.Count - 1) _indexVoice = -1;
+                _indexVoice++;
+                _eventBus.OnLanguageChanged(Voices[_indexVoice]);    
+            }
+            else
+            {
+                if (_index >= ReleaseDefinitions.Count - 1) _index = -1;
+                _index++;
+                _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index], _index + 1, IsSelected());
+            }
         }
 
         private bool IsSelected()
         {
             return SelectedReleaseDefinitions.Any(s => s.Id == ReleaseDefinitions[_index].Id);
-        }
-
-        public void MoveU()
-        {
-            if (_index >= ReleaseDefinitions.Count - 1) _index = -1;
-            _index++;
-            _eventBus.OnPreselectedDeloyment(ReleaseDefinitions[_index], _index + 1, IsSelected());
         }
 
         public void Deselect()

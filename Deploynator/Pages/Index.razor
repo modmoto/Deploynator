@@ -27,11 +27,11 @@
                     <div class="control-button invisible"></div>
                 </div>
                 <div class="buttons-mid-row">
-                    <div class="control-button active" @onclick="() => Do(() => _handler.MoveDown())">
+                    <div class="control-button active" @onclick="() => Do(() => _handler.MoveRight())">
                         <i class="icon fas fa-angle-left"></i>
                     </div>
                     <div class="control-button invisible"></div>
-                    <div class="control-button active" @onclick="() => Do(() => _handler.MoveU())">
+                    <div class="control-button active" @onclick="() => Do(() => _handler.MoveLeft())">
                         <i class="icon fas fa-angle-right"></i>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
     <div class="row">
         <select class="custom-select" @onchange="OnLanguegeChanged" title="Region is required ">
             <option value="Select" selected disabled="disabled">(Choose person)</option>
-            @foreach (var language in languages)
+            @foreach (var language in _handler.Voices)
             {
                 <option value="@language"> @language</option>
             }
@@ -64,26 +64,6 @@
 
 @code
 {
-    private List<string> languages = new()
-    {
-        "en-US-SaraNeural",
-        "es-MX-JorgeNeural",
-        "de-CH-JanNeural",
-        "de-DE-ConradNeural",
-        "de-AT-JonasNeural",
-        "de-AT-IngridNeural",
-        "fr-FR-DeniseNeural",
-        "hi-IN-MadhurNeural",
-        "hi-IN-SwaraNeural",
-        "mr-IN-AarohiNeural",
-        "mr-IN-ManoharNeural",
-        "en-IN-Heera",
-        "en-IN-PriyaRUS",
-        "en-IN-Ravi",
-        "tr-TR-EmelNeural",
-        "tr-TR-AhmetNeural",
-    };
-
     protected override void OnInitialized()
     {
         _eventBus.ReleaseButtonTriggered += (_, _) => InvokeAsync(() => StateHasChanged());
@@ -92,10 +72,9 @@
 
         _eventBus.SelectedDeloyment += (_, _) => InvokeAsync(() => StateHasChanged());
         _eventBus.PreselectedDeloyment += (_, _) => InvokeAsync(() => StateHasChanged());
-        _eventBus.DownButtonTriggered += (_, _) => InvokeAsync(() => StateHasChanged());
-        _eventBus.UpButtonTriggered += (_, _) => InvokeAsync(() => StateHasChanged());
+        _eventBus.RightButtonTriggered += (_, _) => InvokeAsync(() => StateHasChanged());
+        _eventBus.LeftButtonTriggered += (_, _) => InvokeAsync(() => StateHasChanged());
     }
-
 
     private void Do(Action action)
     {

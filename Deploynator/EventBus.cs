@@ -7,8 +7,8 @@ namespace Deploynator
     public class EventBus
     {
         public event EventHandler ReleaseButtonTriggered;
-        public event EventHandler UpButtonTriggered;
-        public event EventHandler DownButtonTriggered;
+        public event EventHandler LeftButtonTriggered;
+        public event EventHandler RightButtonTriggered;
         public event EventHandler SelectButtonTriggered;
         public event EventHandler DeselectButtonTriggered;
         public event EventHandler ReleaseButtonReleased;
@@ -25,9 +25,9 @@ namespace Deploynator
         public event EventHandler FoundJoke;
         public event EventHandler JokeFinished;
         public event EventHandler ErrorNoReleasesSelected;
-        public event EventHandler UpAndDownButtonTriggered;
+        public event EventHandler LeftAndRightButtonTriggered;
         public event EventHandler SelectAndDeselectButtonTriggered;
-
+       
         public virtual void OnLanguageChanged(string newLanguage)
         {
             var handler = LanguageChanged;
@@ -40,15 +40,15 @@ namespace Deploynator
             handler?.Invoke(this, EventArgs.Empty);
         }
 
-        public virtual void OnUpButtonTriggered()
+        public virtual void OnLeftButtonTriggered()
         {
-            var handler = UpButtonTriggered;
+            var handler = LeftButtonTriggered;
             handler?.Invoke(this, EventArgs.Empty);
         }
 
-        public virtual void OnDownButtonTriggered()
+        public virtual void OnRightButtonTriggered()
         {
-            var handler = DownButtonTriggered;
+            var handler = RightButtonTriggered;
             handler?.Invoke(this, EventArgs.Empty);
         }
 
@@ -148,9 +148,9 @@ namespace Deploynator
             handler?.Invoke(this, EventArgs.Empty);
         }
 
-        public void OnUpAndDownButtonTriggered()
+        public void OnLeftAndRightButtonTriggered()
         {
-            var handler = UpAndDownButtonTriggered;
+            var handler = LeftAndRightButtonTriggered;
             handler?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -167,11 +167,11 @@ namespace Deploynator
 
     public class LanguageArgs : EventArgs
     {
-        public string NewLanguage { get; }
+        public string Language { get; }
 
-        public LanguageArgs(string newLanguage)
+        public LanguageArgs(string language)
         {
-            NewLanguage = newLanguage;
+            Language = language;
         }
     }
 
